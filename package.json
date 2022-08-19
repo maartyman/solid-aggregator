@@ -1,0 +1,26 @@
+{
+  "name": "basic-aggregator",
+  "version": "1.0.0",
+  "description": "basic aggregator",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx tsc && node bin/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maartyman/basic-aggregator.git"
+  },
+  "author": "Maarten Vandenbrande",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/maartyman/basic-aggregator/issues"
+  },
+  "homepage": "https://github.com/maartyman/basic-aggregator#readme",
+  "devDependencies": {
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "lazy-logger": "^1.0.8"
+  }
+}
