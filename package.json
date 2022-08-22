@@ -21,6 +21,9 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "lazy-logger": "^1.0.8"
+    "@comunica/query-sparql-link-traversal": "^0.0.2-alpha.2.0",
+    "@types/http-server": "^0.12.1",
+    "lazy-logger": "^1.0.8",
+    "n3": "^1.16.2"
   }
 }

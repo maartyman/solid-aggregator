@@ -16,10 +16,17 @@ export class Logger {
     this.logger = new (new require('lazy-logger'))(loggerType, true, './log/log-', 'yyyy-MM-dd');
   }
 
-  static getInstance(loggerType: LogType) {
+  static setInstance(loggerType: LogType) {
     if (this.instance == null) {
       this.instance = new Logger(loggerType);
-      return this.instance;
+    }
+    return this.instance;
+  }
+
+  static getInstance() {
+    if (this.instance == null) {
+      this.instance = new Logger(LogType.debug);
+      this.instance.warn("Logger was not instantiated, instantiated it with debug level", this);
     }
     return this.instance;
   }
