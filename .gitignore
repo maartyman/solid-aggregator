@@ -129,4 +129,4 @@ dist
 # -- custom: --
 bin/
 log/
-.idea
+.idea/
