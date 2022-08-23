@@ -1,3 +1,10 @@
+# -- custom: --
+bin/
+log/
+.idea/
+
+# -- predefied: --
+
 # Logs
 logs
 *.log
@@ -126,7 +133,3 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# -- custom: --
-bin/
-log/
-.idea/
