@@ -1,5 +1,6 @@
 import {Logger, LogType} from "./utils/logger";
 import {HttpServer} from "./httpServer";
+import {AggregatorKeeper} from "./aggregator/aggregatorKeeper";
 
 
 let logger = Logger.setInstance(LogType.debug);
@@ -7,6 +8,7 @@ let port = 4000;
 let host = "http://localhost:3000/user1/";
 
 let server = new HttpServer(port);
+let aggregatorKeeper = AggregatorKeeper.setInstance();
 
 logger.info(`Server Started on port ${ port }: http://localhost:${port}`, "main.js" )
 

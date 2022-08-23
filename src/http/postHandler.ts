@@ -9,7 +9,7 @@ export class PostHandler {
     let logger = Logger.getInstance();
     logger.debug(`POST request received`, this);
     let query = await getHttpBody(req);
-    logger.debug(`query: ${query}`, this);
+    logger.debug(`query: \n${query}`, "PostHandler");
     AggregatorKeeper.getInstance().addAggregator(query);
     res.end();
   }

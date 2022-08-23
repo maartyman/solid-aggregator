@@ -3,6 +3,7 @@ import {CustomMap} from "../utils/customMap";
 import {Aggregator} from "./aggregator";
 
 export class AggregatorKeeper {
+  private readonly logger = Logger.getInstance();
   private static instance: AggregatorKeeper | null;
   private aggregators;
 
@@ -29,7 +30,17 @@ export class AggregatorKeeper {
   }
 
   public addAggregator(queryString: String) {
-    this.aggregators.set(queryString, new Aggregator(queryString));
+    if (this.aggregators.has(queryString)) {
+      this.logger.warn("query: \n"+ queryString +" \nalready exists!", "AggregatorKeeper");
+    }
+    else {
+      this.aggregators.set(queryString, new Aggregator(queryString));
+      try {
+      }
+      catch (e) {
+        this.logger.error("Didn't register query", "AggregatorKeeper");
+      }
+    }
   }
 
   public getAggregator(queryString: String) : Aggregator {

@@ -9,17 +9,23 @@ export class GetHandler {
     const logger = Logger.getInstance();
     logger.debug(`GET request received`, this);
     const query = await getHttpBody(req);
-    logger.debug(`query: ${query}`, this);
+    logger.debug(`query: \n${query}`, "GetHandler");
     const aggregator = AggregatorKeeper.getInstance().getAggregator(query);
 
     if (aggregator.isQueryFinished()) {
-      /* TODO add 200 response header */
+      /* add 200 response header */
+      res.statusCode = 200;
     }
     else {
-      /* TODO add 206 response header */
+      /* add 206 response header */
+      res.statusCode = 206;
     }
-    // TODO parse n3 store to turtle and add to body
-    aggregator.getdata();
+    // add turtle to body
+    res.setHeader("Content-Type", "text/turtle");
+
+    const RDFTriples = aggregator.getData();
+    logger.debug(`result: \n${RDFTriples}`, "GetHandler");
+    res.write(RDFTriples);
 
     res.end();
   }
