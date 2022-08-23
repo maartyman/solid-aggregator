@@ -1,14 +1,12 @@
 import {Logger} from "../utils/logger";
 import {Quad, Store, Term, Writer} from "n3";
-//import {QueryEngine} from "@comunica/query-sparql-link-traversal";
 import {Bindings} from "@comunica/bindings-factory";
 import {resolveUndefined} from "../utils/generalUtils";
 import {QueryEngine} from "@comunica/query-sparql-link-traversal";
 
 export class Aggregator {
   private readonly logger = Logger.getInstance();
-  private readonly QueryEngine = require('@comunica/query-sparql-link-traversal').QueryEngine;
-  private readonly engine;
+  private readonly QueryEngineFactory = require('@comunica/query-sparql-link-traversal').QueryEngineFactory;
   private results = "";
   private queryFinished = false;
 
@@ -18,7 +16,7 @@ export class Aggregator {
 
   constructor(query: String) {
     this.query = query;
-    this.engine = new this.QueryEngine();
+
     /*
       first execute query but also guard it (=> check if changes are made to the data)
       guard: websocket based or polling based?
@@ -29,7 +27,11 @@ export class Aggregator {
   private async executeQuery() {
     this.logger.debug(`Starting comunica query, with query: \n${ this.query.toString() }`, "Aggregator");
 
-    const bindingsStream = await this.engine.queryBindings(
+    let engine = await new this.QueryEngineFactory().create({
+      configPath: 'node_modules/@comunica/config-query-sparql-link-traversal/config/config-follow-all.json',
+    });
+
+    const bindingsStream = await engine.queryBindings(
       this.query , {
       sources: ['http://localhost:3000/user1/'], //TODO make variable
       lenient: true,
@@ -76,3 +78,23 @@ export class Aggregator {
     return this.queryFinished;
   }
 }
+
+
+
+/*
+comunica-dynamic-sparql-link-traversal http://localhost:3000/user1/ -c '
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@comunica/config-query-sparql/^2.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@comunica/config-query-sparql-link-traversal/^0.0.0/components/context.jsonld"],
+  "import": [
+    "ccqslt:configs/configs-base.json",
+    "ccqslt:configs/extract-links/actors/all.json"
+  ]
+}' -q '
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+SELECT ?n WHERE {
+  ?p a foaf:Person .
+  ?p foaf:name ?n .
+}'
+ */

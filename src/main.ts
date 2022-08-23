@@ -1,5 +1,5 @@
 import {Logger, LogType} from "./utils/logger";
-import {HttpServer} from "./httpServer";
+import {HttpServer} from "./http/httpServer";
 import {AggregatorKeeper} from "./aggregator/aggregatorKeeper";
 
 

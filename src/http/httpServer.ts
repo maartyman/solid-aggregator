@@ -1,8 +1,8 @@
-import {createServer, ServerResponse, IncomingMessage} from "http";
-import {Logger} from "./utils/logger";
+import {createServer, ServerResponse, IncomingMessage} from "";
+import {Logger} from "../utils/logger";
 import * as events from "events";
-import {GetHandler} from "./http/getHandler";
-import {PostHandler} from "./http/postHandler";
+import {GetHandler} from "./getHandler";
+import {PostHandler} from "./postHandler";
 
 export class HttpServer extends events.EventEmitter {
   private server;
