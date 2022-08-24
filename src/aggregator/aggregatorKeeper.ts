@@ -1,6 +1,8 @@
 import {Logger} from "../utils/logger";
 import {CustomMap} from "../utils/customMap";
 import {Aggregator} from "./aggregator";
+import {QueryExplanation} from "./queryExplanation";
+import { v4 as uuidv4 } from 'uuid';
 
 export class AggregatorKeeper {
   private readonly logger = Logger.getInstance();
@@ -29,22 +31,44 @@ export class AggregatorKeeper {
     return this.instance;
   }
 
-  public addAggregator(queryString: String) {
-    if (this.aggregators.has(queryString)) {
-      this.logger.warn("query: \n"+ queryString +" \nalready exists!", "AggregatorKeeper");
+  public addAggregator(queryExplanation: QueryExplanation) : Aggregator {
+    let aggregator: Aggregator | undefined;
+    for (const tempAggregator of this.aggregators.values()) {
+      if (tempAggregator.queryExplanation.queryString != queryExplanation.queryString) {
+        continue;
+      }
+      else if (tempAggregator.queryExplanation.sources != queryExplanation.sources) {
+        continue;
+      }
+      else if (tempAggregator.queryExplanation.context != queryExplanation.context) {
+        continue;
+      }
+      else if (tempAggregator.queryExplanation.reasoningRules != queryExplanation.reasoningRules) {
+        continue;
+      }
+      else if (tempAggregator.queryExplanation.comunicaVersion != queryExplanation.comunicaVersion) {
+        continue;
+      }
+      else if (tempAggregator.queryExplanation.lenient != queryExplanation.lenient) {
+        continue;
+      }
+      aggregator = tempAggregator;
+      break;
+    }
+    if (aggregator) {
+      this.logger.warn("query: \n"+ JSON.stringify(queryExplanation) +" \nalready exists!", "AggregatorKeeper");
+      return aggregator;
     }
     else {
-      this.aggregators.set(queryString, new Aggregator(queryString));
-      try {
-      }
-      catch (e) {
-        this.logger.error("Didn't register query", "AggregatorKeeper");
-      }
+      const UUID = uuidv4();
+      aggregator = new Aggregator(queryExplanation, UUID);
+      this.aggregators.set(UUID, aggregator);
+      return aggregator;
     }
   }
 
-  public getAggregator(queryString: String) : Aggregator {
-    return this.aggregators.get(queryString);
+  public getAggregator(queryExplanation: QueryExplanation) : Aggregator {
+    return this.aggregators.get(queryExplanation);
   }
 
 }
