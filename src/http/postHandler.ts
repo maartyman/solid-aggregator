@@ -12,18 +12,42 @@ export class PostHandler {
     logger.debug(`query: \n${JSON.stringify(query)}`, "PostHandler");
     let aggregator = AggregatorKeeper.getInstance().addAggregator(query);
     //TODO return HTTP 500 code on failure
-    res.statusCode = 202;
-    res.setHeader("Location", aggregator.UUID.toString());
-    logger.debug(`Writing 202`, "PostHandler");
+    //res.statusCode = 202;
+    //res.setHeader("Location", aggregator.UUID.toString());
+    //logger.debug(`Writing 102`, "PostHandler");
+    /*
     res.write("");
-    res.statusCode = 201;
-    res.setHeader("Location", aggregator.UUID.toString());
-    aggregator.isQueryFinished().then((value: boolean) => {
-      if (value) {
-        logger.debug(`Writing 201`, "PostHandler");
-        res.write("");
-        res.end();
+    */
+    if (aggregator.isQueryEngineBuild()){
+      logger.debug(`Writing 201: Created`, "PostHandler");
+      res.statusCode = 200;
+      res.setHeader("Location", aggregator.UUID.toString());
+      res.write(aggregator.getData());
+      res.end();
+    }
+    else {
+      aggregator.on("queryEngineEvent", (value) => {
+        if (value == "build") {
+          /*
+          logger.debug(`Writing 102: Processing`, "PostHandler");
+          res.setHeader("Location", aggregator.UUID.toString());
+          res.writeProcessing();
+           */
+          logger.debug(`Writing 201: Created`, "PostHandler");
+          res.statusCode = 201;
+          res.setHeader("Location", aggregator.UUID.toString());
+          res.write(aggregator.getData());
+          res.end();
+        }
+      });
+    }
+
+    /*
+    aggregator.on("queryEvent", (value) => {
+      if (value == "done") {
       }
     });
+
+     */
   }
 }

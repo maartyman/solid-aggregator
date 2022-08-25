@@ -2,6 +2,7 @@
 bin/
 log/
 .idea/
+client-examples/tests/
 
 # -- predefied: --
 

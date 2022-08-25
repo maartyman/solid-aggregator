@@ -20,16 +20,14 @@ fetch("http://localhost:4000", {
         'Content-Type': 'application/json'
     }
 }).then((response) => {
-    console.log(JSON.stringify(response.headers).toString());
-    console.log(response.body);
-    /*
-    fetch("http://localhost:4000", {
+    console.log(response.status.toString());
+    console.log(JSON.stringify(response.headers.get("location")).toString());
+    fetch(`http://localhost:4000/${response.headers.get("location")}`, {
         method: "GET",
     }).then((response) => {
-        console.log(response);
+        console.log(response.status.toString());
+        console.log(response.body.read().toString());
     });
-
-     */
 });
 
 

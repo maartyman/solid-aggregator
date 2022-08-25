@@ -3,6 +3,7 @@ import {CustomMap} from "../utils/customMap";
 import {Aggregator} from "./aggregator";
 import {QueryExplanation} from "./queryExplanation";
 import { v4 as uuidv4 } from 'uuid';
+import {arrayEquality} from "../utils/generalUtils";
 
 export class AggregatorKeeper {
   private readonly logger = Logger.getInstance();
@@ -34,22 +35,28 @@ export class AggregatorKeeper {
   public addAggregator(queryExplanation: QueryExplanation) : Aggregator {
     let aggregator: Aggregator | undefined;
     for (const tempAggregator of this.aggregators.values()) {
-      if (tempAggregator.queryExplanation.queryString != queryExplanation.queryString) {
+      if (!(tempAggregator.queryExplanation.queryString === queryExplanation.queryString)) {
+        this.logger.debug("queryString", "AggregatorKeeper");
         continue;
       }
-      else if (tempAggregator.queryExplanation.sources != queryExplanation.sources) {
+      else if (!arrayEquality(tempAggregator.queryExplanation.sources, queryExplanation.sources)) {
+        this.logger.debug("sources", "AggregatorKeeper");
         continue;
       }
-      else if (tempAggregator.queryExplanation.context != queryExplanation.context) {
+      else if (!(tempAggregator.queryExplanation.context === queryExplanation.context)) {
+        this.logger.debug("context", "AggregatorKeeper");
         continue;
       }
-      else if (tempAggregator.queryExplanation.reasoningRules != queryExplanation.reasoningRules) {
+      else if (!(tempAggregator.queryExplanation.reasoningRules === queryExplanation.reasoningRules)) {
+        this.logger.debug("reasoningRules", "AggregatorKeeper");
         continue;
       }
       else if (tempAggregator.queryExplanation.comunicaVersion != queryExplanation.comunicaVersion) {
+        this.logger.debug("comunicaVersion", "AggregatorKeeper");
         continue;
       }
       else if (tempAggregator.queryExplanation.lenient != queryExplanation.lenient) {
+        this.logger.debug("lenient", "AggregatorKeeper");
         continue;
       }
       aggregator = tempAggregator;
@@ -67,8 +74,8 @@ export class AggregatorKeeper {
     }
   }
 
-  public getAggregator(queryExplanation: QueryExplanation) : Aggregator {
-    return this.aggregators.get(queryExplanation);
+  public getAggregator(UUID: String) : Aggregator {
+    return this.aggregators.get(UUID);
   }
 
 }

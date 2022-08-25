@@ -5,12 +5,14 @@ import {resolveUndefined} from "../utils/generalUtils";
 //import {QueryEngine, QueryEngineFactory} from "@comunica/query-sparql";
 import {QueryEngine} from "@comunica/query-sparql-link-traversal";
 import {QueryExplanation} from "./queryExplanation";
+import {EventEmitter} from "events";
 
-export class Aggregator {
+export class Aggregator extends EventEmitter {
   private readonly logger = Logger.getInstance();
   private queryEngine: QueryEngine | undefined;
   private results = "";
-  private queryFinished = Promise<Boolean>;
+  private queryEngineBuild = false;
+  private queryFinished = false;
   public readonly UUID;
 
   public readonly queryExplanation: QueryExplanation;
@@ -18,6 +20,7 @@ export class Aggregator {
   //private readonly tripleStore = new Store();
 
   constructor(queryExplanation: QueryExplanation, UUID: String) {
+    super();
     this.queryExplanation = queryExplanation;
     this.UUID = UUID;
 
@@ -29,6 +32,9 @@ export class Aggregator {
     }).then((queryEngine: QueryEngine) => {
       this.queryEngine = queryEngine;
     }).finally(() => {
+      this.logger.debug(`Comunica engine build`, "Aggregator");
+      this.queryEngineBuild = true;
+      this.emit("queryEngineEvent", "build");
       this.executeQuery();
       /*
         TODO guard data: websocket based or polling based?
@@ -69,12 +75,15 @@ export class Aggregator {
     });
 
     bindingsStream.on('end', () => {
-      this.queryFinished.resolve(true);
+      this.queryFinished = true;
       this.logger.debug(`Comunica query finished`, "Aggregator");
+      this.emit("queryEvent", "done");
     });
 
     bindingsStream.on('error', (error: any) => {
+      //TODO solve error
       this.logger.error(error, "Aggregator");
+      this.emit("queryEvent", "error");
     });
   }
 
@@ -86,27 +95,11 @@ export class Aggregator {
     return this.results;
   }
 
-  public isQueryFinished (): Promise<boolean> {
-    return this.queryFinished.prototype;
+  public isQueryEngineBuild (): boolean {
+    return this.queryEngineBuild;
+  }
+
+  public isQueryFinished (): boolean {
+    return this.queryFinished;
   }
 }
-
-
-
-/*
-comunica-dynamic-sparql-link-traversal http://localhost:3000/user1/ -c '
-{
-  "@context": [
-    "https://linkedsoftwaredependencies.org/bundles/npm/@comunica/config-query-sparql/^2.0.0/components/context.jsonld",
-    "https://linkedsoftwaredependencies.org/bundles/npm/@comunica/config-query-sparql-link-traversal/^0.0.0/components/context.jsonld"],
-  "import": [
-    "ccqslt:configs/configs-base.json",
-    "ccqslt:configs/extract-links/actors/all.json"
-  ]
-}' -q '
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-SELECT ?n WHERE {
-  ?p a foaf:Person .
-  ?p foaf:name ?n .
-}'
- */
