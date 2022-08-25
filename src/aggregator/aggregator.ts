@@ -1,11 +1,10 @@
 import {Logger} from "../utils/logger";
-import {Quad, Store, Term, Writer} from "n3";
 import {Bindings} from "@comunica/bindings-factory";
-import {resolveUndefined} from "../utils/generalUtils";
-//import {QueryEngine, QueryEngineFactory} from "@comunica/query-sparql";
-import {QueryEngine} from "@comunica/query-sparql-link-traversal";
+import {QueryEngine} from "@comunica/query-sparql";
+//import {QueryEngine} from "@comunica/query-sparql-link-traversal";
 import {QueryExplanation} from "./queryExplanation";
 import {EventEmitter} from "events";
+import {resolveUndefined} from "../utils/generalUtils";
 
 export class Aggregator extends EventEmitter {
   private readonly logger = Logger.getInstance();
@@ -25,10 +24,12 @@ export class Aggregator extends EventEmitter {
     this.UUID = UUID;
 
     //this.QueryEngineFactory = require(this.queryExplanation.comunicaVersion? this.queryExplanation.comunicaVersion : "@comunica/query-sparql-link-traversal").QueryEngineFactory;
-    const queryEngineFactory = require("@comunica/query-sparql-link-traversal").QueryEngineFactory;
+    this.logger.debug("comunicaVersion = " + queryExplanation.comunicaVersion, "Aggregator");
+    const queryEngineFactory = require(queryExplanation.comunicaVersion.toString()).QueryEngineFactory;
 
+    this.logger.debug("comunica context path = " + queryExplanation.comunicaContext, "Aggregator");
     new queryEngineFactory().create({
-      configPath: 'node_modules/@comunica/config-query-sparql-link-traversal/config/config-follow-all.json',
+      configPath: queryExplanation.comunicaContext,
     }).then((queryEngine: QueryEngine) => {
       this.queryEngine = queryEngine;
     }).finally(() => {

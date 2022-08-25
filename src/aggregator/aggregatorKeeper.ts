@@ -43,7 +43,7 @@ export class AggregatorKeeper {
         this.logger.debug("sources", "AggregatorKeeper");
         continue;
       }
-      else if (!(tempAggregator.queryExplanation.context === queryExplanation.context)) {
+      else if (!(tempAggregator.queryExplanation.comunicaContext === queryExplanation.comunicaContext)) {
         this.logger.debug("context", "AggregatorKeeper");
         continue;
       }
@@ -51,7 +51,7 @@ export class AggregatorKeeper {
         this.logger.debug("reasoningRules", "AggregatorKeeper");
         continue;
       }
-      else if (tempAggregator.queryExplanation.comunicaVersion != queryExplanation.comunicaVersion) {
+      else if (!(tempAggregator.queryExplanation.comunicaVersion === queryExplanation.comunicaVersion)) {
         this.logger.debug("comunicaVersion", "AggregatorKeeper");
         continue;
       }

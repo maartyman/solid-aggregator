@@ -23,6 +23,7 @@
   "dependencies": {
     "@comunica/bindings-factory": "^2.2.0",
     "@comunica/query-sparql-link-traversal": "^0.0.2-alpha.2.0",
+    "@comunica/query-sparql-solid": "^2.2.0",
     "@types/http-server": "^0.12.1",
     "events": "^3.3.0",
     "lazy-logger": "^1.0.8",

@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-let jsonObject = {
+let queryExplanation = {
     queryString: `
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
     SELECT ?n WHERE {
@@ -9,13 +9,15 @@ let jsonObject = {
     }
     `,
     sources: [
-        "http://localhost:3000/user1/profile/card"
-    ]
+        "http://localhost:3000/user1/profile/card",
+    ],
+    comunicaVersion: "link-traversal",
+    context: "link-traversal-follow-all"
 }
 
 fetch("http://localhost:4000", {
     method: "POST",
-    body: JSON.stringify(jsonObject),
+    body: JSON.stringify(queryExplanation),
     headers: {
         'Content-Type': 'application/json'
     }
@@ -26,7 +28,8 @@ fetch("http://localhost:4000", {
         method: "GET",
     }).then((response) => {
         console.log(response.status.toString());
-        console.log(response.body.read().toString());
+        let body = response.body.read();
+        console.log(body? body.toString() : "null");
     });
 });
 

@@ -8,7 +8,19 @@ export async function getHttpBody(req: IncomingMessage) : Promise<QueryExplanati
     body += chunk;
   });
   await ended(req);
-  return JSON.parse(body);
+
+  const json = JSON.parse(body);
+
+  let queryExplaination = new QueryExplanation(
+    json.queryString,
+    json.sources,
+    json.comunicaVersion,
+    json.context,
+    json.reasoningRules,
+    json.lenient
+  );
+
+  return queryExplaination
 }
 
 async function ended(req: IncomingMessage) : Promise<void> {
