@@ -15,7 +15,7 @@ export async function getHttpBody(req: IncomingMessage) : Promise<QueryExplanati
     json.queryString,
     json.sources,
     json.comunicaVersion,
-    json.context,
+    json.comunicaContext,
     json.reasoningRules,
     json.lenient
   );

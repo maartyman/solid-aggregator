@@ -1,14 +1,15 @@
 import {Logger, LogType} from "./utils/logger";
 import {HttpServer} from "./http/httpServer";
 import {AggregatorKeeper} from "./aggregator/aggregatorKeeper";
+import {WebSocketHandler} from "./http/webSocketHandler";
 
 
 let logger = Logger.setInstance(LogType.debug);
 let port = 4000;
-let host = "http://localhost:3000/user1/";
 
-let server = new HttpServer(port);
+let server = HttpServer.setInstance(port);
 let aggregatorKeeper = AggregatorKeeper.setInstance();
+let webSocketHandler = WebSocketHandler.setInstance();
 
 logger.info(`Server Started on port ${ port }: http://localhost:${port}`, "main.js" )
 

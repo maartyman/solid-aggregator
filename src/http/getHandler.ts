@@ -27,7 +27,7 @@ export class GetHandler {
 
     res.setHeader("Content-Type", "text/text");
 
-    const returnValue = aggregator.getData();
+    const returnValue = JSON.stringify(aggregator.getData());
     logger.debug(`result: \n${returnValue}`, "GetHandler");
     res.write(returnValue);
 

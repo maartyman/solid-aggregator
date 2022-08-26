@@ -1,18 +1,26 @@
 import fetch from "node-fetch";
+import {QueryExplanation} from "./utils/queryExplanation.js";
+import pkg from "websocket";
+const {client} = pkg;
 
 let queryExplanation = {
     queryString: `
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-    SELECT ?n WHERE {
+    SELECT ?friend1Name ?friend2Name WHERE {
       ?p a foaf:Person .
-      ?p foaf:name ?n .
+      ?p foaf:knows ?friend1 .
+      ?friend1 a foaf:Person .
+      ?friend1 foaf:name ?friend1Name .
+      ?friend1 foaf:knows ?friend2 .
+      ?friend2 foaf:name ?friend2Name .
     }
+    ORDER BY ?friend1Name
     `,
     sources: [
         "http://localhost:3000/user1/profile/card",
     ],
     comunicaVersion: "link-traversal",
-    context: "link-traversal-follow-all"
+    //comunicaContext: QueryExplanation.linkTraversalFollowMatchQuery
 }
 
 fetch("http://localhost:4000", {
@@ -24,6 +32,38 @@ fetch("http://localhost:4000", {
 }).then((response) => {
     console.log(response.status.toString());
     console.log(JSON.stringify(response.headers.get("location")).toString());
+
+    let wsClient = new client();
+
+    wsClient.on('connectFailed', function(error) {
+        console.log('Connect Error: ' + error.toString());
+    });
+
+    wsClient.on('connect', function(connection) {
+        console.log('WebSocket Client Connected');
+        connection.on('error', function(error) {
+            console.log("Connection Error: " + error.toString());
+        });
+        connection.on('close', function() {
+            console.log('Connection Closed');
+        });
+        connection.on('message', function(message) {
+            if (message.type === 'utf8') {
+                let parsedData = JSON.parse(message.utf8Data);
+                for (const binding of parsedData.bindings){
+                    console.log("Received: ");
+                    for (const element of Object.keys(binding.entries)) {
+                        console.log("\t" + element + ": " + binding.entries[element].value);
+                    }
+                }
+            }
+        });
+        connection.sendUTF(response.headers.get("location").toString());
+    });
+
+    wsClient.connect(`ws://localhost:4000`, 'bindings');
+
+    /*
     fetch(`http://localhost:4000/${response.headers.get("location")}`, {
         method: "GET",
     }).then((response) => {
@@ -31,6 +71,6 @@ fetch("http://localhost:4000", {
         let body = response.body.read();
         console.log(body? body.toString() : "null");
     });
+
+     */
 });
-
-

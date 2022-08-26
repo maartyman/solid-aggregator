@@ -9,7 +9,7 @@ import {resolveUndefined} from "../utils/generalUtils";
 export class Aggregator extends EventEmitter {
   private readonly logger = Logger.getInstance();
   private queryEngine: QueryEngine | undefined;
-  private results = "";
+  private results = new Array<Bindings>();
   private queryEngineBuild = false;
   private queryFinished = false;
   public readonly UUID;
@@ -58,21 +58,9 @@ export class Aggregator extends EventEmitter {
 
     bindingsStream.on('data', (binding: Bindings) => {
       this.logger.debug(`on data: ${ binding.toString() }`, "Aggregator");
-      this.results += binding.get('n')?.value + "\n";
-      /*
-      try {
-        this.tripleStore.add(
-          new Quad(
-            <Term>resolveUndefined(binding.get('s')),
-            <Term>resolveUndefined(binding.get('p')),
-            <Term>resolveUndefined(binding.get('o')),
-          )
-        );
-      }
-      catch (e) {
-        this.logger.debug("Tripple didn't have all 3 values set, ignoring it", "Aggregator");
-      }
-      */
+      this.results.push(binding);
+
+      this.emit("binding", {bindings: [binding]});
     });
 
     bindingsStream.on('end', () => {
@@ -88,12 +76,12 @@ export class Aggregator extends EventEmitter {
     });
   }
 
-  public getData() : String {
+  public getData() : {bindings: (Bindings)[]} {
     /*
     const writer = new Writer();
     return writer.quadsToString(this.tripleStore.getQuads(null, null, null, null));
     */
-    return this.results;
+    return {bindings: this.results};
   }
 
   public isQueryEngineBuild (): boolean {

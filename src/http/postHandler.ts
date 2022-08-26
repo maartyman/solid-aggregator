@@ -22,21 +22,16 @@ export class PostHandler {
       logger.debug(`Writing 201: Created`, "PostHandler");
       res.statusCode = 200;
       res.setHeader("Location", aggregator.UUID.toString());
-      res.write(aggregator.getData());
+      res.write(JSON.stringify(aggregator.getData()));
       res.end();
     }
     else {
       aggregator.on("queryEngineEvent", (value) => {
         if (value == "build") {
-          /*
-          logger.debug(`Writing 102: Processing`, "PostHandler");
-          res.setHeader("Location", aggregator.UUID.toString());
-          res.writeProcessing();
-           */
           logger.debug(`Writing 201: Created`, "PostHandler");
           res.statusCode = 201;
           res.setHeader("Location", aggregator.UUID.toString());
-          res.write(aggregator.getData());
+          res.write(JSON.stringify(aggregator.getData()));
           res.end();
         }
       });
