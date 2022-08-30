@@ -14,16 +14,16 @@ let queryExplanation = {
       ?friend1 foaf:knows ?friend2 .
       ?friend2 foaf:name ?friend2Name .
     }
-    ORDER BY ?friend1Name
     `,
     sources: [
         "http://localhost:3000/user1/profile/card",
     ],
+    lenient: true,
     comunicaVersion: "link-traversal",
     //comunicaContext: QueryExplanation.linkTraversalFollowMatchQuery
 }
 
-fetch("http://localhost:4000", {
+fetch("http://localhost:3001", {
     method: "POST",
     body: JSON.stringify(queryExplanation),
     headers: {
@@ -61,16 +61,5 @@ fetch("http://localhost:4000", {
         connection.sendUTF(response.headers.get("location").toString());
     });
 
-    wsClient.connect(`ws://localhost:4000`, 'bindings');
-
-    /*
-    fetch(`http://localhost:4000/${response.headers.get("location")}`, {
-        method: "GET",
-    }).then((response) => {
-        console.log(response.status.toString());
-        let body = response.body.read();
-        console.log(body? body.toString() : "null");
-    });
-
-     */
+    wsClient.connect(`ws://localhost:3001`, 'bindings');
 });

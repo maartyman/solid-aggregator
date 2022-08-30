@@ -5,6 +5,7 @@ import {QueryEngine} from "@comunica/query-sparql";
 import {QueryExplanation} from "./queryExplanation";
 import {EventEmitter} from "events";
 import {resolveUndefined} from "../utils/generalUtils";
+import {AggregatorKeeper} from "./aggregatorKeeper";
 
 export class Aggregator extends EventEmitter {
   private readonly logger = Logger.getInstance();
@@ -37,13 +38,13 @@ export class Aggregator extends EventEmitter {
       this.queryEngineBuild = true;
       this.emit("queryEngineEvent", "build");
       this.executeQuery();
-      /*
-        TODO guard data: websocket based or polling based?
-      */
+      this.guardQuery();
     });
   }
 
   private async executeQuery() {
+    console.log(this);
+    console.log(this.logger);
     this.logger.debug(`Starting comunica query, with query: \n${ this.queryExplanation.queryString.toString() }`, "Aggregator");
 
     if (this.queryEngine == undefined) {
@@ -53,10 +54,11 @@ export class Aggregator extends EventEmitter {
     const bindingsStream = await this.queryEngine.queryBindings(
       this.queryExplanation.queryString.toString(), {
       sources: this.queryExplanation.sources,
-      lenient: true,
+      lenient: this.queryExplanation.lenient,
     });
 
     bindingsStream.on('data', (binding: Bindings) => {
+      //TODO handle delete not only additions
       this.logger.debug(`on data: ${ binding.toString() }`, "Aggregator");
       this.results.push(binding);
 
@@ -73,6 +75,20 @@ export class Aggregator extends EventEmitter {
       //TODO solve error
       this.logger.error(error, "Aggregator");
       this.emit("queryEvent", "error");
+    });
+  }
+
+  private guardQuery() {
+    //TODO implement sub/pub for when sub/pub works
+    //TODO if sub/pub is not available fall back on polling
+    this.on("queryEvent", (message) => {
+      if (message === "done") {
+        if (AggregatorKeeper.getInstance().guardingConfig.guardingType === "polling") {
+          let pollingEvery = Number.parseInt(AggregatorKeeper.getInstance().guardingConfig.args[0]);
+          this.logger.debug(`polling in ${pollingEvery/1000} seconds`, "aggregator");
+          setTimeout(this.executeQuery.bind(this), pollingEvery);
+        }
+      }
     });
   }
 

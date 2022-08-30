@@ -35,6 +35,7 @@ export class WebSocketHandler {
           let aggregator = AggregatorKeeper.getInstance().getAggregator(message.utf8Data);
 
           aggregator.on("binding", (binding: {bindings: Bindings[]}) => {
+            //TODO handle delete not only additions
             connection.sendUTF(JSON.stringify(binding));
           });
 
@@ -48,7 +49,7 @@ export class WebSocketHandler {
           }
           else {
             aggregator.on("queryEvent", (message: string) => {
-              if (message === "done") {
+              if (message === "done" && AggregatorKeeper.getInstance().guardingConfig.guardingType === "none") {
                 connection.close(1000, "Query finished.");
               }
             });

@@ -4,30 +4,35 @@ import {Aggregator} from "./aggregator";
 import {QueryExplanation} from "./queryExplanation";
 import { v4 as uuidv4 } from 'uuid';
 import {arrayEquality} from "../utils/generalUtils";
+import {GuardingConfig} from "../utils/guardingConfig";
 
 export class AggregatorKeeper {
   private readonly logger = Logger.getInstance();
   private static instance: AggregatorKeeper | null;
   private aggregators;
 
-  constructor() {
+  public readonly guardingConfig: GuardingConfig;
+
+  constructor(guardingConfig: GuardingConfig) {
     /*
     TODO make a better searchable store that links query strings to n3 stores
     */
+    this.guardingConfig = guardingConfig;
+
     this.aggregators = new CustomMap();
   }
 
-  static setInstance() {
+  static setInstance(guardingConfig: GuardingConfig) {
     if (this.instance == null) {
-      this.instance = new AggregatorKeeper();
+      this.instance = new AggregatorKeeper(guardingConfig);
     }
     return this.instance;
   }
 
   static getInstance() {
     if (this.instance == null) {
-      this.instance = new AggregatorKeeper();
-      Logger.getInstance().warn("AggregatorKeeper was not instantiated, instantiating it now", this);
+      this.instance = new AggregatorKeeper(GuardingConfig.default);
+      Logger.getInstance().error("AggregatorKeeper was not instantiated, instantiating it now with default values.", this);
     }
     return this.instance;
   }

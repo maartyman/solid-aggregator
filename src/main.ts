@@ -2,37 +2,52 @@ import {Logger, LogType} from "./utils/logger";
 import {HttpServer} from "./http/httpServer";
 import {AggregatorKeeper} from "./aggregator/aggregatorKeeper";
 import {WebSocketHandler} from "./http/webSocketHandler";
+import {program} from "commander";
+import {GuardingConfig} from "./utils/guardingConfig";
 
+program
+  .name("query-aggregator")
+  .description("An intermediate server between the client and a solid pod.")
+  .version("1.0.0")
 
-let logger = Logger.setInstance(LogType.debug);
-let port = 4000;
+//connect => list all bluetooth devices and select 1
+program.command("start")
+  .description("Start aggregator server")
+  .option(
+    "-p, --port <portNumber>",
+    "Defines the port of the server. (default: 3001)",
+    "3001"
+  )
+  .option(
+    "--polling <pollingValue>",
+    "Enables query guarding and defines how long the server should wait between query's in milliseconds. (default: 1000)",
+    "1000"
+  )
+  .option(
+  "-d, --debug <debugValue>",
+  "Defines the debug level (error, warn, info, verbose, debug, silly). (default: info)",
+  "info"
+  )
+  .action((options) => {
+    let logger = Logger.setInstance(options.debug);
 
-let server = HttpServer.setInstance(port);
-let aggregatorKeeper = AggregatorKeeper.setInstance();
-let webSocketHandler = WebSocketHandler.setInstance();
+    logger.debug(`starting httpServer`, "main.js" );
+    HttpServer.setInstance(options.port);
 
-logger.info(`Server Started on port ${ port }: http://localhost:${port}`, "main.js" )
+    logger.debug(`setting up the aggregator keeper`, "main.js" );
+    let guardingConfig: GuardingConfig;
+    if (options.polling) {
+      guardingConfig = new GuardingConfig("polling", [options.polling]);
+    }
+    else {
+      guardingConfig = GuardingConfig.default;
+    }
+    AggregatorKeeper.setInstance(guardingConfig);
 
-/*
-let server = createServer((req: IncomingMessage, res: ServerResponse) => {
-  logger.debug((req.method != undefined)? req.method : "no method", "root");
-  if(req.method == "GET") {
-    res.write("Done\n");
-    res.end();
-  }
-}).listen(4000);
+    logger.debug(`starting the websocket`, "main.js" );
+    WebSocketHandler.setInstance();
 
-server.on("connect", (req: IncomingMessage, socket: stream.Duplex, head: Buffer) => {
-  logger.debug((req.method != undefined)? req.method : "no method", "root");
-  if(req.method == "GET") {
-    socket.write("Done");
-    socket.end();
-  }
-});
-
-server.on("connection", socket => {
-  socket.on("", data => {
-
+    logger.info(`Server Started on port ${ options.port }: http://localhost:${options.port}`, "main.js" )
   });
-});
-*/
+
+program.parse();
