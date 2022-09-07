@@ -1,5 +1,4 @@
 import {IncomingMessage} from "http";
-import {Logger, LogType} from "./logger";
 import {QueryExplanation} from "../aggregator/queryExplanation";
 
 export async function getHttpBody(req: IncomingMessage) : Promise<QueryExplanation> {

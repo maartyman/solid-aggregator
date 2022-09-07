@@ -1,18 +1,17 @@
 import {createServer, ServerResponse, IncomingMessage} from "http";
-import {Logger} from "../utils/logger";
 import * as events from "events";
 import {GetHandler} from "./getHandler";
 import {PostHandler} from "./postHandler";
+import {Logger} from "tslog";
+import {loggerSettings} from "../utils/loggerSettings";
 
 export class HttpServer extends events.EventEmitter {
+  private readonly logger = new Logger(loggerSettings);
   private static instance: HttpServer | null;
   public readonly server;
-  private readonly logger;
 
   constructor(port: number) {
     super();
-    this.logger = Logger.getInstance();
-
     this.server = createServer(this.requestHandler).listen(port);
   }
 
@@ -32,7 +31,7 @@ export class HttpServer extends events.EventEmitter {
 
 
   private requestHandler(req: IncomingMessage, res: ServerResponse) {
-    let requestHandlerLogger = Logger.getInstance();
+    let requestHandlerLogger = new Logger(loggerSettings);
     switch (req.method) {
       case "GET":
         GetHandler.handle(req, res);
@@ -41,7 +40,7 @@ export class HttpServer extends events.EventEmitter {
         PostHandler.handle(req, res);
         break;
       default:
-        requestHandlerLogger.error(`request method not known! method: [ ${ req.method } ]`, this);
+        requestHandlerLogger.error(`request method not known! method: [ ${ req.method } ]`);
         break;
     }
   }

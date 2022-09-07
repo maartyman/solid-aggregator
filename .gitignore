@@ -2,7 +2,7 @@
 bin/
 log/
 .idea/
-client-examples/tests/
+../solid-agregator-client/client-examples/tests/
 static/
 
 # -- predefied: --

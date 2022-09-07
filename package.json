@@ -1,22 +1,24 @@
 {
-  "name": "query-aggregator",
+  "name": "solid-aggregator-server",
   "version": "1.0.0",
-  "description": "query aggregator",
+  "description": "solid-aggregator-server",
   "main": "bin/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx tsc && node bin/main.js"
+    "build": "npx tsc",
+    "start": "node bin/main.js",
+    "build-start": "npx tsc && node bin/main.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maartyman/basic-aggregator.git"
+    "url": "git+https://github.com/maartyman/solid-aggregator-server.git"
   },
   "author": "Maarten Vandenbrande",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/maartyman/basic-aggregator/issues"
+    "url": "https://github.com/maartyman/solid-aggregator-server/issues"
   },
-  "homepage": "https://github.com/maartyman/basic-aggregator#readme",
+  "homepage": "https://github.com/maartyman/solid-aggregator-server#readme",
   "devDependencies": {
     "typescript": "^4.7.4"
   },
@@ -29,8 +31,8 @@
     "@types/websocket": "^1.0.5",
     "commander": "^9.4.0",
     "events": "^3.3.0",
-    "lazy-logger": "^1.0.8",
     "n3": "^1.16.2",
+    "tslog": "^3.3.4",
     "uuid": "^8.3.2",
     "websocket": "^1.0.34"
   }

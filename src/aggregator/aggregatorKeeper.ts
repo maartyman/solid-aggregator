@@ -1,13 +1,15 @@
-import {Logger} from "../utils/logger";
+
 import {CustomMap} from "../utils/customMap";
 import {Aggregator} from "./aggregator";
 import {QueryExplanation} from "./queryExplanation";
 import { v4 as uuidv4 } from 'uuid';
 import {arrayEquality} from "../utils/generalUtils";
 import {GuardingConfig} from "../utils/guardingConfig";
+import {Logger} from "tslog";
+import {loggerSettings} from "../utils/loggerSettings";
 
 export class AggregatorKeeper {
-  private readonly logger = Logger.getInstance();
+  private readonly logger = new Logger(loggerSettings);
   private static instance: AggregatorKeeper | null;
   private aggregators;
 
@@ -32,7 +34,7 @@ export class AggregatorKeeper {
   static getInstance() {
     if (this.instance == null) {
       this.instance = new AggregatorKeeper(GuardingConfig.default);
-      Logger.getInstance().error("AggregatorKeeper was not instantiated, instantiating it now with default values.", this);
+      new Logger(loggerSettings).error("AggregatorKeeper was not instantiated, instantiating it now with default values.", this);
     }
     return this.instance;
   }
@@ -41,34 +43,34 @@ export class AggregatorKeeper {
     let aggregator: Aggregator | undefined;
     for (const tempAggregator of this.aggregators.values()) {
       if (!(tempAggregator.queryExplanation.queryString === queryExplanation.queryString)) {
-        this.logger.debug("queryString", "AggregatorKeeper");
+        this.logger.debug("queryString");
         continue;
       }
       else if (!arrayEquality(tempAggregator.queryExplanation.sources, queryExplanation.sources)) {
-        this.logger.debug("sources", "AggregatorKeeper");
+        this.logger.debug("sources");
         continue;
       }
       else if (!(tempAggregator.queryExplanation.comunicaContext === queryExplanation.comunicaContext)) {
-        this.logger.debug("context", "AggregatorKeeper");
+        this.logger.debug("context");
         continue;
       }
       else if (!(tempAggregator.queryExplanation.reasoningRules === queryExplanation.reasoningRules)) {
-        this.logger.debug("reasoningRules", "AggregatorKeeper");
+        this.logger.debug("reasoningRules");
         continue;
       }
       else if (!(tempAggregator.queryExplanation.comunicaVersion === queryExplanation.comunicaVersion)) {
-        this.logger.debug("comunicaVersion", "AggregatorKeeper");
+        this.logger.debug("comunicaVersion");
         continue;
       }
       else if (tempAggregator.queryExplanation.lenient != queryExplanation.lenient) {
-        this.logger.debug("lenient", "AggregatorKeeper");
+        this.logger.debug("lenient");
         continue;
       }
       aggregator = tempAggregator;
       break;
     }
     if (aggregator) {
-      this.logger.warn("query: \n"+ JSON.stringify(queryExplanation) +" \nalready exists!", "AggregatorKeeper");
+      this.logger.warn("query: \n"+ JSON.stringify(queryExplanation) +" \nalready exists!");
       return aggregator;
     }
     else {

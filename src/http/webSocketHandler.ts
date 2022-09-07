@@ -1,16 +1,16 @@
 import {HttpServer} from "./httpServer";
-import {Logger} from "../utils/logger";
 import {Message, server, connection} from "websocket";
 import {AggregatorKeeper} from "../aggregator/aggregatorKeeper";
 import {Bindings} from "@comunica/bindings-factory";
+import {loggerSettings} from "../utils/loggerSettings";
+import {Logger} from "tslog";
 
 export class WebSocketHandler {
+  private static logger = new Logger(loggerSettings);
   private static instance: WebSocketHandler | null;
   private wsServer;
-  private logger;
 
   constructor() {
-    this.logger = Logger.getInstance();
     this.wsServer = new server({
       httpServer: HttpServer.getInstance().server,
       autoAcceptConnections: false
@@ -28,10 +28,11 @@ export class WebSocketHandler {
        */
 
       var connection: connection = request.accept('bindings', request.origin);
-      Logger.getInstance().debug("Connection accepted.", "WebSocketHandler");
+
+      new Logger(loggerSettings).debug("Connection accepted.");
       connection.on('message', function(message: Message) {
         if (message.type === 'utf8') {
-          Logger.getInstance().debug('Received Message: ' + message.utf8Data, "WebSocketHandler");
+          new Logger(loggerSettings).debug('Received Message: ' + message.utf8Data);
           let aggregator = AggregatorKeeper.getInstance().getAggregator(message.utf8Data);
 
           aggregator.on("binding", (bindings: Bindings[]) => {
@@ -57,7 +58,7 @@ export class WebSocketHandler {
         }
       });
       connection.on('close', function(reasonCode, description) {
-        Logger.getInstance().debug(' Peer ' + connection.remoteAddress + ' disconnected.', "WebSocketHandler");
+        new Logger(loggerSettings).debug(' Peer ' + connection.remoteAddress + ' disconnected.');
       });
     });
   }
