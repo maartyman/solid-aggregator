@@ -54,7 +54,7 @@ export class Aggregator extends EventEmitter {
     const bindingsStream = await this.queryEngine.queryBindings(
       this.queryExplanation.queryString.toString(), {
       sources: this.queryExplanation.sources,
-      lenient: this.queryExplanation.lenient,
+      lenient: this.queryExplanation.lenient
     });
 
     bindingsStream.on('data', (binding: Bindings) => {
@@ -92,12 +92,8 @@ export class Aggregator extends EventEmitter {
     });
   }
 
-  public getData() : {bindings: (Bindings)[]} {
-    /*
-    const writer = new Writer();
-    return writer.quadsToString(this.tripleStore.getQuads(null, null, null, null));
-    */
-    return {bindings: this.results};
+  public getData() : Bindings[] {
+    return this.results;
   }
 
   public isQueryEngineBuild (): boolean {

@@ -15,17 +15,17 @@ program.command("start")
   .description("Start aggregator server")
   .option(
     "-p, --port <portNumber>",
-    "Defines the port of the server. (default: 3001)",
+    "Defines the port of the server.",
     "3001"
   )
   .option(
     "--polling <pollingValue>",
-    "Enables query guarding and defines how long the server should wait between query's in milliseconds. (default: 1000)",
+    "Enables query guarding and defines how long the server should wait between query's in milliseconds.",
     "1000"
   )
   .option(
   "-d, --debug <debugValue>",
-  "Defines the debug level (error, warn, info, verbose, debug, silly). (default: info)",
+  "Defines the debug level (error, warn, info, verbose, debug, silly).",
   "info"
   )
   .action((options) => {

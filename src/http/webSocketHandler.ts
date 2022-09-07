@@ -34,14 +34,14 @@ export class WebSocketHandler {
           Logger.getInstance().debug('Received Message: ' + message.utf8Data, "WebSocketHandler");
           let aggregator = AggregatorKeeper.getInstance().getAggregator(message.utf8Data);
 
-          aggregator.on("binding", (binding: {bindings: Bindings[]}) => {
+          aggregator.on("binding", (bindings: Bindings[]) => {
             //TODO handle delete not only additions
-            connection.sendUTF(JSON.stringify(binding));
+            connection.sendUTF(JSON.stringify({bindings: bindings}));
           });
 
-          let data = aggregator.getData();
-          if (data.bindings.length > 0){
-            connection.sendUTF(JSON.stringify(data));
+          let bindings = aggregator.getData();
+          if (bindings.length > 0){
+            connection.sendUTF(JSON.stringify({bindings: bindings}));
           }
 
           if (aggregator.isQueryFinished()) {

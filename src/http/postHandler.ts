@@ -22,7 +22,7 @@ export class PostHandler {
       logger.debug(`Writing 201: Created`, "PostHandler");
       res.statusCode = 200;
       res.setHeader("Location", aggregator.UUID.toString());
-      res.write(JSON.stringify(aggregator.getData()));
+      res.write(JSON.stringify({bindings: aggregator.getData()}));
       res.end();
     }
     else {
@@ -31,7 +31,7 @@ export class PostHandler {
           logger.debug(`Writing 201: Created`, "PostHandler");
           res.statusCode = 201;
           res.setHeader("Location", aggregator.UUID.toString());
-          res.write(JSON.stringify(aggregator.getData()));
+          res.write(JSON.stringify({bindings: aggregator.getData()}));
           res.end();
         }
       });
