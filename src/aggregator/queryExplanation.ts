@@ -6,7 +6,7 @@ export class QueryExplanation {
   public readonly sources: [IDataSource];
   public readonly comunicaVersion: String;
   public readonly comunicaContext: String;
-  public readonly reasoningRules?: String;
+  public readonly reasoningRules: String;
   public readonly lenient: boolean;
 
   constructor(queryString: String, sources: [IDataSource], comunicaVersion?: String, context?: String, reasoningRules?: String, lenient?: boolean) {
@@ -15,6 +15,9 @@ export class QueryExplanation {
     switch (comunicaVersion) {
       case "default":
         this.comunicaVersion = "@comunica/query-sparql";
+        break;
+      case "reasoning":
+        this.comunicaVersion = "@comunica/comuncia-feature-reasoning";
         break;
       case "link-traversal":
         this.comunicaVersion = "@comunica/query-sparql-link-traversal";
@@ -29,6 +32,9 @@ export class QueryExplanation {
     switch(context) {
       case "default":
         this.comunicaContext = "node_modules/@comunica/query-sparql/config/config-default.json";
+        break;
+      case "reasoning-default":
+        this.comunicaContext = "comunica-feature-reasoning/engines/query-sparql-reasoning/config/config-default.json";
         break;
       case "link-traversal-default":
         this.comunicaContext = "node_modules/@comunica/config-query-sparql-link-traversal/config/config-default.json";
@@ -57,6 +63,9 @@ export class QueryExplanation {
           case "default":
             this.comunicaContext = "node_modules/@comunica/query-sparql/config/config-default.json";
             break;
+          case "reasoning":
+            this.comunicaContext = "comunica-feature-reasoning/engines/query-sparql-reasoning/config/config-default.json";
+            break;
           case "link-traversal":
             this.comunicaContext = "node_modules/@comunica/config-query-sparql-link-traversal/config/config-default.json";
             break;
@@ -69,11 +78,8 @@ export class QueryExplanation {
         }
         break;
     }
-    //TODO Implement reasoning rules
+    this.reasoningRules = resolveUndefined(reasoningRules, "");
     this.lenient = resolveUndefined(lenient, false);
   }
 
-}
-
-export class ComunicaContexts {
 }

@@ -13,27 +13,24 @@ export class AggregatorKeeper {
   private static instance: AggregatorKeeper | null;
   private aggregators;
 
-  public readonly guardingConfig: GuardingConfig;
-
-  constructor(guardingConfig: GuardingConfig) {
+  constructor() {
     /*
     TODO make a better searchable store that links query strings to n3 stores
     */
-    this.guardingConfig = guardingConfig;
 
     this.aggregators = new CustomMap();
   }
 
-  static setInstance(guardingConfig: GuardingConfig) {
+  static setInstance() {
     if (this.instance == null) {
-      this.instance = new AggregatorKeeper(guardingConfig);
+      this.instance = new AggregatorKeeper();
     }
     return this.instance;
   }
 
   static getInstance() {
     if (this.instance == null) {
-      this.instance = new AggregatorKeeper(GuardingConfig.default);
+      this.instance = new AggregatorKeeper();
       new Logger(loggerSettings).error("AggregatorKeeper was not instantiated, instantiating it now with default values.", this);
     }
     return this.instance;
@@ -85,4 +82,5 @@ export class AggregatorKeeper {
     return this.aggregators.get(UUID);
   }
 
+  //TODO remove aggregator
 }

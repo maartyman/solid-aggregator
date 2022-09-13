@@ -50,9 +50,8 @@ export class WebSocketHandler {
           }
           else {
             aggregator.on("queryEvent", (message: string) => {
-              if (message === "done" && AggregatorKeeper.getInstance().guardingConfig.guardingType === "none") {
-                connection.close(1000, "Query finished.");
-              }
+              //TODO keep connection alive after initial query
+              connection.close(1000, "Query finished.");
             });
           }
         }

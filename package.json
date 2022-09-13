@@ -34,6 +34,8 @@
     "n3": "^1.16.2",
     "tslog": "^3.3.4",
     "uuid": "^8.3.2",
-    "websocket": "^1.0.34"
+    "websocket": "^1.0.34",
+    "@comunica/comuncia-feature-reasoning": "./comunica-feature-reasoning/engines/query-sparql-reasoning/lib",
+    "@comunica/reasoning-context-entries": "./comunica-feature-reasoning/packages/reasoning-context-entries/lib"
   }
 }

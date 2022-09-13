@@ -5,13 +5,13 @@ import {program} from "commander";
 import {GuardingConfig} from "./utils/guardingConfig";
 import {Logger} from "tslog";
 import {loggerSettings} from "./utils/loggerSettings";
+import {GuardKeeper} from "./guarding/guardKeeper";
 
 program
   .name("query-aggregator")
   .description("An intermediate server between the client and a solid pod.")
   .version("1.0.0")
 
-//connect => list all bluetooth devices and select 1
 program.command("serve")
   .description("Start the Solid Aggregator Server.")
   .option(
@@ -22,7 +22,7 @@ program.command("serve")
   .option(
     "--polling <pollingValue>",
     "Enables query guarding and defines how long the server should wait between query's in milliseconds.",
-    "1000"
+    "10000"
   )
   .option(
   "-d, --debug <debugValue>",
@@ -44,7 +44,9 @@ program.command("serve")
     else {
       guardingConfig = GuardingConfig.default;
     }
-    AggregatorKeeper.setInstance(guardingConfig);
+    GuardKeeper.setInstance(guardingConfig);
+
+    AggregatorKeeper.setInstance();
 
     logger.debug(`starting the websocket`);
     WebSocketHandler.setInstance();
