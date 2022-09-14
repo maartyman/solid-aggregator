@@ -6,7 +6,7 @@ import {loggerSettings} from "../utils/loggerSettings";
 import {Logger} from "tslog";
 
 export class WebSocketHandler {
-  private static logger = new Logger(loggerSettings);
+  private readonly logger = new Logger(loggerSettings);
   private static instance: WebSocketHandler | null;
   private wsServer;
 
@@ -50,8 +50,9 @@ export class WebSocketHandler {
           }
           else {
             aggregator.on("queryEvent", (message: string) => {
-              //TODO keep connection alive after initial query
-              connection.close(1000, "Query finished.");
+              if (message === "error") {
+                connection.close(1011, "Internal error");
+              }
             });
           }
         }

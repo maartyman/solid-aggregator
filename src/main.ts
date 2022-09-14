@@ -37,16 +37,13 @@ program.command("serve")
     HttpServer.setInstance(options.port);
 
     logger.debug(`setting up the aggregator keeper`);
-    let guardingConfig: GuardingConfig;
-    if (options.polling) {
-      guardingConfig = new GuardingConfig("polling", [options.polling]);
-    }
-    else {
-      guardingConfig = GuardingConfig.default;
-    }
-    GuardKeeper.setInstance(guardingConfig);
-
     AggregatorKeeper.setInstance();
+
+    logger.debug(`setting up the data guarding`);
+    if (options.polling) {
+      GuardingConfig.pollingInterval = options.polling;
+    }
+    GuardKeeper.setInstance();
 
     logger.debug(`starting the websocket`);
     WebSocketHandler.setInstance();

@@ -29,7 +29,6 @@ export class HttpServer extends events.EventEmitter {
     return this.instance;
   }
 
-
   private requestHandler(req: IncomingMessage, res: ServerResponse) {
     let requestHandlerLogger = new Logger(loggerSettings);
     switch (req.method) {
@@ -44,5 +43,4 @@ export class HttpServer extends events.EventEmitter {
         break;
     }
   }
-
 }

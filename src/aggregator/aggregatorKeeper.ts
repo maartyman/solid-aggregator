@@ -4,7 +4,6 @@ import {Aggregator} from "./aggregator";
 import {QueryExplanation} from "./queryExplanation";
 import { v4 as uuidv4 } from 'uuid';
 import {arrayEquality} from "../utils/generalUtils";
-import {GuardingConfig} from "../utils/guardingConfig";
 import {Logger} from "tslog";
 import {loggerSettings} from "../utils/loggerSettings";
 

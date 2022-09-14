@@ -80,7 +80,7 @@ export class Aggregator extends EventEmitter {
       this.logger.debug(`on data: ${ binding.toString() }`);
       this.results.push(binding);
 
-      this.emit("binding", {bindings: [binding]});
+      this.emit("binding", [binding]);
     });
 
     bindingsStream.on('end', () => {

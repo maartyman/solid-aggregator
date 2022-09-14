@@ -28,12 +28,11 @@ export class GuardWebSockets implements Guard {
       connection.on('message', (message: Message) => {
         if (message.type === 'utf8') {
           const resources = this.pubRegEx.exec(message.utf8Data);
-          this.logger.debug("resources: " + resources);
           if (resources && resources[1]) {
             const aggregators = this.notifiers.get(resources[1].toString())
             if (aggregators) {
+              this.logger.debug("data has changed in resource: " + resources[1].toString());
               for (const aggregator of aggregators) {
-                this.logger.debug("data has changed for: " + aggregator);
                 aggregator.dataChanged(resources[1].toString());
               }
             }

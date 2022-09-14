@@ -1,10 +1,10 @@
 import {Logger} from "tslog";
 import {loggerSettings} from "../utils/loggerSettings";
-import {GuardingConfig} from "../utils/guardingConfig";
 import {Aggregator} from "../aggregator/aggregator";
 import {GuardWebSockets} from "./guardWebSockets";
 import {GuardPolling} from "./guardPolling";
 import {Guard} from "./guard";
+import {connection, Message} from "websocket";
 
 /*
     Do something like: on new link => new guard (via guardKeeper)
@@ -33,38 +33,35 @@ export class GuardKeeper {
   private static instance?: GuardKeeper;
   private guards: Map<string, Guard>;
 
-  public readonly guardingConfig: GuardingConfig;
-
-  constructor(guardingConfig: GuardingConfig) {
-    this.guardingConfig = guardingConfig;
+  constructor() {
     this.guards = new Map<string, Guard>();
   }
 
-  static setInstance(guardingConfig: GuardingConfig) {
+  static setInstance() {
     if (this.instance == null) {
-      this.instance = new GuardKeeper(guardingConfig);
+      this.instance = new GuardKeeper();
     }
     return this.instance;
   }
 
   static getInstance() {
     if (this.instance == null) {
-      this.instance = new GuardKeeper(GuardingConfig.default);
+      this.instance = new GuardKeeper();
       new Logger(loggerSettings).error("AggregatorKeeper was not instantiated, instantiating it now with default values.", this);
     }
     return this.instance;
   }
 
-  public addGuard(resource: string, aggregator: Aggregator) {
+  public async addGuard(resource: string, aggregator: Aggregator) {
     const url = new URL(resource);
 
     let guard = this.guards.get(url.host);
 
     if (!guard) {
-      if (this.checkWebSocketAvailability(url.host)) {
+      if (await this.checkWebSocketAvailability(url.host)) {
         guard = new GuardWebSockets(url.host);
       } else {
-        guard =new GuardPolling(url.host);
+        guard =new GuardPolling();
       }
       this.guards.set(url.host, guard);
     }
@@ -72,8 +69,33 @@ export class GuardKeeper {
     guard.evaluateResource(resource, aggregator);
   }
 
-  private checkWebSocketAvailability(host: string): boolean {
-    //TODO add ws check
-    return true;
+  private async checkWebSocketAvailability(host: string): Promise<boolean> {
+    //TODO is this the best solution?
+    this.logger.debug("Checking pod availability");
+    const WebSocketClient = require('websocket').client;
+    const ws = new WebSocketClient();
+
+    const promise = new Promise<boolean>( resolve => {
+      ws.on('connect', (connection: connection) => {
+        this.logger.debug("Checking pod availability: connection succeeded");
+        ws.abort();
+        resolve(true);
+      });
+
+      ws.on("connectFailed", () => {
+        this.logger.debug("Checking pod availability: connection failed");
+        ws.abort();
+        resolve(false);
+      });
+
+      setTimeout(() => {
+        ws.abort();
+        resolve(false);
+      }, 30000);
+    });
+
+    ws.connect("ws://" + host, 'solid-0.1');
+
+    return promise;
   }
 }
