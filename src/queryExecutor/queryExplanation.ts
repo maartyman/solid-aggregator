@@ -17,7 +17,7 @@ export class QueryExplanation {
         this.comunicaVersion = "@comunica/query-sparql";
         break;
       case "reasoning":
-        this.comunicaVersion = "@comunica/comuncia-feature-reasoning";
+        this.comunicaVersion = "@comunica/query-sparql-reasoning";
         break;
       case "link-traversal":
         this.comunicaVersion = "@comunica/query-sparql-link-traversal";

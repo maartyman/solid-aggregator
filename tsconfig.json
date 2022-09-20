@@ -102,8 +102,5 @@
   },
   "include": [
     "src"
-  ],
-  "exclude": [
-    "comunica-feature-reasoning"
   ]
 }

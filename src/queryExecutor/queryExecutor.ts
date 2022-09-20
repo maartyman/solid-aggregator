@@ -2,32 +2,34 @@ import {Logger} from "tslog";
 import {Bindings} from "@comunica/bindings-factory";
 import {QueryEngine} from "@comunica/query-sparql";
 import {QueryExplanation} from "./queryExplanation";
-import {EventEmitter} from "events";
 import {loggerSettings} from "../utils/loggerSettings";
 import {KeysRdfReason} from "@comunica/reasoning-context-entries";
 import {Store} from "n3";
-import {GuardKeeper} from "../guarding/guardKeeper";
+import {Resource} from "../resource/resource";
+import {QueryExecutorFactory} from "./queryExecutorFactory";
+import {EventEmittingActor} from "../utils/actor-factory/eventEmittingActor";
+import {GuardFactory} from "../guard/guardFactory";
 
-export class Aggregator extends EventEmitter {
+export class QueryExecutor extends EventEmittingActor<string, any, Resource> {
+  static factory = new QueryExecutorFactory();
   private readonly logger = new Logger(loggerSettings);
   private queryEngine: QueryEngine | undefined;
   private results = new Array<Bindings>();
   private queryEngineBuild = false;
   private queryFinished = false;
-  private reevaluateResources = new Array<string>();
+  private changedResources = new Array<Resource>();
 
-  public readonly UUID;
-  public readonly queryExplanation: QueryExplanation;
+  public queryExplanation: QueryExplanation | undefined;
 
-  //private readonly tripleStore = new Store();
+  constructor(UUID: string) {
+    super(UUID);
+  }
 
-  constructor(queryExplanation: QueryExplanation, UUID: String) {
-    super();
+  public async start(queryExplanation: QueryExplanation) {
     this.queryExplanation = queryExplanation;
-    this.UUID = UUID;
 
     this.on("queryEvent", (message) => {
-      if (message === "done" && this.reevaluateResources.length > 0) {
+      if (message === "done" && this.changedResources.length > 0) {
         this.executeQuery();
       }
     });
@@ -50,6 +52,10 @@ export class Aggregator extends EventEmitter {
   }
 
   private async executeQuery() {
+    if (!this.queryExplanation) {
+      throw new Error("query explanation for UUID: " + this.key + " is undefined!");
+    }
+
     this.queryFinished = false;
     this.logger.debug(`Starting comunica query, with query: \n${ this.queryExplanation.queryString.toString() }`);
 
@@ -60,10 +66,10 @@ export class Aggregator extends EventEmitter {
     this.logger.debug(`Starting comunica query, with reasoningRules: \n${ this.queryExplanation.reasoningRules.toString() }`);
 
     let parallelPromise = new Array<Promise<any>>();
-    for (const resource of this.reevaluateResources) {
-      parallelPromise.push(this.queryEngine.invalidateHttpCache(resource));
+    for (const resource of this.changedResources) {
+      parallelPromise.push(this.queryEngine.invalidateHttpCache(resource.key));
     }
-    this.reevaluateResources.splice(0);
+    this.changedResources.splice(0);
     await Promise.all(parallelPromise);
 
     const bindingsStream = await this.queryEngine.queryBindings(
@@ -96,14 +102,19 @@ export class Aggregator extends EventEmitter {
     });
   }
 
-  private customFetch(input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
-    GuardKeeper.getInstance().addGuard(input.toString(), this);
+  private async customFetch(input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
+    //TODO check used resources: delete the ones that aren't used add the new ones
+    //TODO possibly wait until the resource is actively guarded
+
+    input = new URL(input.toString());
+    input = input.origin + input.pathname;
+    Resource.factory.getOrCreate(input, this);
 
     return fetch(input, init);
   }
 
-  public dataChanged(resource: string) {
-    this.reevaluateResources.push(resource);
+  public dataChanged(resource: Resource) {
+    this.changedResources.push(resource);
 
     if (this.queryFinished) {
       this.executeQuery();

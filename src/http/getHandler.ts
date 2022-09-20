@@ -1,6 +1,6 @@
 import {IncomingMessage, ServerResponse} from "http";
 import {getHttpBody} from "../utils/getHttpBody";
-import {AggregatorKeeper} from "../aggregator/aggregatorKeeper";
+import {QueryExecutorFactory} from "../queryExecutor/queryExecutorFactory";
 import {resolveUndefinedString} from "../utils/generalUtils";
 import {Logger} from "tslog";
 import {loggerSettings} from "../utils/loggerSettings";
@@ -13,7 +13,7 @@ export class GetHandler {
     logger.debug(`url: \n${req.url}`);
     const queryUUID = resolveUndefinedString(req.url).split("/")[1];
     logger.debug(`query: \n${queryUUID}`);
-    const aggregator = AggregatorKeeper.getInstance().getAggregator(queryUUID);
+    const aggregator = QueryExecutorFactory.getInstance().getAggregator(queryUUID);
 
     if (aggregator.isQueryFinished()) {
       /* add 200 response header */

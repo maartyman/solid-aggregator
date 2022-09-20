@@ -1,37 +1,34 @@
 import {Guard} from "./guard";
-import {Aggregator} from "../aggregator/aggregator";
+import {QueryExecutor} from "../queryExecutor/queryExecutor";
 import {Logger} from "tslog";
 import {loggerSettings} from "../utils/loggerSettings";
 import * as http from "http";
 import {GuardingConfig} from "../utils/guardingConfig";
 
-export class GuardPolling implements Guard {
+export class GuardPolling extends Guard {
   private readonly logger = new Logger(loggerSettings);
-  private notifiers = new Map<string, PolResource>();
+  private notifiers = new Map<string, PollResource>();
 
-  constructor() {
-  }
-
-  evaluateResource(resource: string, aggregator: Aggregator): void {
+  evaluateResource(resource: string, aggregator: QueryExecutor): void {
     //make sure resource isn't already polled before its added
     const polResource = this.notifiers.get(resource)
     if (polResource) {
       polResource.addAggregator(aggregator);
     }
     else {
-      this.notifiers.set(resource, new PolResource(resource, aggregator));
+      this.notifiers.set(resource, new PollResource(resource, aggregator));
     }
   }
 }
 
-class PolResource {
+class PollResource {
   private readonly logger = new Logger(loggerSettings);
   private readonly resource: string;
   private ETag?: string;
   private lastModified?: number;
-  private aggregators: Aggregator[];
+  private aggregators: QueryExecutor[];
 
-  constructor(resource: string, aggregator: Aggregator) {
+  constructor(resource: string, aggregator: QueryExecutor) {
     this.resource = resource;
     this.aggregators = [aggregator];
 
@@ -84,7 +81,7 @@ class PolResource {
     req.end();
   }
 
-  public addAggregator(aggregator: Aggregator) {
+  public addAggregator(aggregator: QueryExecutor) {
     if (!this.aggregators.includes(aggregator)) {
       this.aggregators.push(aggregator);
     }

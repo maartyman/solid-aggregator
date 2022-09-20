@@ -1,10 +1,10 @@
 import {Logger} from "tslog";
 import {loggerSettings} from "../utils/loggerSettings";
-import {Aggregator} from "../aggregator/aggregator";
 import {GuardWebSockets} from "./guardWebSockets";
 import {GuardPolling} from "./guardPolling";
 import {Guard} from "./guard";
-import {connection, Message} from "websocket";
+import {connection} from "websocket";
+import {Resource} from "../resource/resource";
 
 /*
     Do something like: on new link => new guard (via guardKeeper)
@@ -28,45 +28,68 @@ import {connection, Message} from "websocket";
 
     */
 
-export class GuardKeeper {
+export class GuardFactory extends Factory<string, Guard> {
   private readonly logger = new Logger(loggerSettings);
-  private static instance?: GuardKeeper;
-  private guards: Map<string, Guard>;
 
   constructor() {
-    this.guards = new Map<string, Guard>();
+    super(Guard);
   }
 
-  static setInstance() {
-    if (this.instance == null) {
-      this.instance = new GuardKeeper();
+  public getOrCreate(key: string, parent?: Resource | undefined, actor?: new (key: string) => Guard) {
+
+    let temporaryPollingGuard = this.map.get(key);
+
+    if (!temporaryPollingGuard) {
+      temporaryPollingGuard = new GuardPolling(key);
+      this.map.set(key, temporaryPollingGuard);
+      this.changeGuardType(temporaryPollingGuard, typeof GuardWebSockets);
     }
-    return this.instance;
-  }
 
-  static getInstance() {
-    if (this.instance == null) {
-      this.instance = new GuardKeeper();
-      new Logger(loggerSettings).error("AggregatorKeeper was not instantiated, instantiating it now with default values.", this);
+    if (!parent) {
+      throw new Error("Making guard, guard doesn't have a parent.");
     }
-    return this.instance;
+
+    temporaryPollingGuard.makeLink(parent, temporaryPollingGuard);
+
+    return temporaryPollingGuard;
   }
 
-  public async addGuard(resource: string, aggregator: Aggregator) {
-    const url = new URL(resource);
+  /*
+  public async addGuard(resource: Resource): Promise<Guard> {
+    const url = new URL(resource.resourceName);
 
-    let guard = this.guards.get(url.host);
+    let guard = this.guards.get(resource.resourceName);
 
     if (!guard) {
       if (await this.checkWebSocketAvailability(url.host)) {
-        guard = new GuardWebSockets(url.host);
+        guard = new GuardWebSockets(resource.resourceName);
       } else {
         guard =new GuardPolling();
       }
       this.guards.set(url.host, guard);
     }
 
-    guard.evaluateResource(resource, aggregator);
+    guard.evaluateResource(resourceName, aggregatorResource);
+    return guard;
+  }
+
+   */
+
+  public async changeGuardType(currentGuard: Guard, guardType: string) {
+    if (typeof currentGuard === guardType) {
+      return;
+    }
+    if (guardType === typeof GuardPolling) {
+      const newGuard = new GuardPolling(currentGuard.key);
+      //TODO if ready link it to the resource and delete the polling resource
+    }
+    else if (guardType === typeof GuardWebSockets) {
+      const newGuard = new GuardWebSockets(currentGuard.key);
+      //TODO if ready link it to the resource and delete the polling resource
+    }
+    else {
+      this.logger.warn("Guardtype: " + guardType + " doesn't exist");
+    }
   }
 
   private async checkWebSocketAvailability(host: string): Promise<boolean> {

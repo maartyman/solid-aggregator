@@ -1,6 +1,6 @@
 import {IncomingMessage, ServerResponse} from "http";
 import {getHttpBody} from "../utils/getHttpBody";
-import {AggregatorKeeper} from "../aggregator/aggregatorKeeper";
+import {QueryExecutorFactory} from "../queryExecutor/queryExecutorFactory";
 import {loggerSettings} from "../utils/loggerSettings";
 import {Logger} from "tslog";
 
@@ -11,10 +11,10 @@ export class PostHandler {
     logger.debug(`POST request received`);
     let query = await getHttpBody(req);
     logger.debug(`query: \n${JSON.stringify(query)}`);
-    let aggregator = AggregatorKeeper.getInstance().addAggregator(query);
+    let aggregator = QueryExecutorFactory.getInstance().addAggregator(query);
     //TODO return HTTP 500 code on failure
     //res.statusCode = 202;
-    //res.setHeader("Location", aggregator.UUID.toString());
+    //res.setHeader("Location", queryExecutor.UUID.toString());
     //logger.debug(`Writing 102`);
     /*
     res.write("");
@@ -39,7 +39,7 @@ export class PostHandler {
     }
 
     /*
-    aggregator.on("queryEvent", (value) => {
+    queryExecutor.on("queryEvent", (value) => {
       if (value == "done") {
       }
     });

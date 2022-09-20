@@ -1,6 +1,6 @@
 import {HttpServer} from "./httpServer";
 import {Message, server, connection} from "websocket";
-import {AggregatorKeeper} from "../aggregator/aggregatorKeeper";
+import {QueryExecutorFactory} from "../queryExecutor/queryExecutorFactory";
 import {Bindings} from "@comunica/bindings-factory";
 import {loggerSettings} from "../utils/loggerSettings";
 import {Logger} from "tslog";
@@ -33,7 +33,7 @@ export class WebSocketHandler {
       connection.on('message', function(message: Message) {
         if (message.type === 'utf8') {
           new Logger(loggerSettings).debug('Received Message: ' + message.utf8Data);
-          let aggregator = AggregatorKeeper.getInstance().getAggregator(message.utf8Data);
+          let aggregator = QueryExecutorFactory.getInstance().getAggregator(message.utf8Data);
 
           aggregator.on("binding", (bindings: Bindings[]) => {
             //TODO handle delete not only additions

@@ -1,15 +1,15 @@
 import {Guard} from "./guard";
-import {Aggregator} from "../aggregator/aggregator";
+import {QueryExecutor} from "../queryExecutor/queryExecutor";
 import {connection, Message} from "websocket";
 import {Logger} from "tslog";
 import {loggerSettings} from "../utils/loggerSettings";
 
 
-export class GuardWebSockets implements Guard {
+export class GuardWebSockets extends Guard {
   private readonly logger = new Logger(loggerSettings);
   private readonly ws;
   private connection?: connection;
-  private notifiers = new Map<string, Aggregator[]>();
+  private notifiers = new Map<string, QueryExecutor[]>();
   private pubRegEx = new RegExp(/pub (https?:\/\/\S+)/);
 
   constructor(host: string) {
@@ -44,7 +44,7 @@ export class GuardWebSockets implements Guard {
     this.ws.connect("ws://" + host, 'solid-0.1');
   }
 
-  evaluateResource(resource: string, aggregator: Aggregator): void {
+  evaluateResource(resource: string, aggregator: QueryExecutor): void {
     this.logger.debug("evaluateResource: " + resource);
     if (this.connection) {
       this.connection.sendUTF('sub ' + resource);
