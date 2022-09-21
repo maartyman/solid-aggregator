@@ -2,16 +2,18 @@
  * @class
  * The Factory class makes unique instances of an Actor based on a given key.
  */
-class Factory<Key, Value extends Actor<Key, any, any>> {
+import {Actor} from "./actor";
+
+export class Factory<Key, Value extends Actor<Key>> {
   protected map = new Map<Key, Value>();
-  protected actor: new (key: Key) => Value;
+  protected actor: new (key: Key, ...params: any) => Value;
 
   /**
    * The constructor of the Factory class.
    *
    * @param actor - The class of the actor function
    */
-  constructor(actor: new (key: Key) => Value) {
+  constructor(actor: new (key: Key, ...params: any) => Value) {
     this.actor = actor;
   }
 
@@ -28,19 +30,15 @@ class Factory<Key, Value extends Actor<Key, any, any>> {
    * The getOrCreate() method returns a class based on the given Key. If no class with the given key exists the method will return a new class, otherwise it will return an existing class.
    *
    * @param key - The key.
-   * @param parent? - The parent class to which a link needs to be made.
    * @param actor? - Another initializer that extends the actor of this Factory.
+   * @param params - possible additional params for the actor class.
    */
-  public getOrCreate(key: Key, parent?: any, actor?: new (key: Key) => Value): Value {
+  public async getOrCreate(key: Key, actor?: new (key: Key, ...params: any) => Value, ...params: any): Promise<Value> {
     let element = this.map.get(key);
 
     if (!element) {
-      element = new this.actor(key);
+      element = new this.actor(key, ...params);
       this.map.set(key, element);
-    }
-
-    if (parent) {
-      element.makeLink(parent, element);
     }
 
     return element;

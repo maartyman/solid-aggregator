@@ -1,9 +1,8 @@
 import {IncomingMessage, ServerResponse} from "http";
-import {getHttpBody} from "../utils/getHttpBody";
-import {QueryExecutorFactory} from "../queryExecutor/queryExecutorFactory";
 import {resolveUndefinedString} from "../utils/generalUtils";
 import {Logger} from "tslog";
 import {loggerSettings} from "../utils/loggerSettings";
+import {QueryExecutor} from "../queryExecutor/queryExecutor";
 
 
 export class GetHandler {
@@ -13,9 +12,16 @@ export class GetHandler {
     logger.debug(`url: \n${req.url}`);
     const queryUUID = resolveUndefinedString(req.url).split("/")[1];
     logger.debug(`query: \n${queryUUID}`);
-    const aggregator = QueryExecutorFactory.getInstance().getAggregator(queryUUID);
+    const queryExecutor = QueryExecutor.factory.get(queryUUID);
 
-    if (aggregator.isQueryFinished()) {
+    if(!queryExecutor) {
+      res.statusCode = 404;
+      res.write("");
+      res.end();
+      return;
+    }
+
+    if (queryExecutor.isQueryFinished()) {
       /* add 200 response header */
       logger.debug(`GET status code: 200`);
       res.statusCode = 200;
@@ -28,7 +34,7 @@ export class GetHandler {
 
     res.setHeader("Content-Type", "text/text");
 
-    const returnValue = JSON.stringify({bindings: aggregator.getData()});
+    const returnValue = JSON.stringify({bindings: queryExecutor.getData()});
     logger.debug(`result: \n${returnValue}`);
     res.write(returnValue);
 

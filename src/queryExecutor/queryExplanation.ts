@@ -34,7 +34,7 @@ export class QueryExplanation {
         this.comunicaContext = "node_modules/@comunica/query-sparql/config/config-default.json";
         break;
       case "reasoning-default":
-        this.comunicaContext = "comunica-feature-reasoning/engines/query-sparql-reasoning/config/config-default.json";
+        this.comunicaContext = "node_modules/@comunica/config-reasoning/config/config-default.json";
         break;
       case "link-traversal-default":
         this.comunicaContext = "node_modules/@comunica/config-query-sparql-link-traversal/config/config-default.json";
@@ -64,7 +64,7 @@ export class QueryExplanation {
             this.comunicaContext = "node_modules/@comunica/query-sparql/config/config-default.json";
             break;
           case "reasoning":
-            this.comunicaContext = "comunica-feature-reasoning/engines/query-sparql-reasoning/config/config-default.json";
+            this.comunicaContext = "node_modules/@comunica/config-reasoning/config/config-default.json";
             break;
           case "link-traversal":
             this.comunicaContext = "node_modules/@comunica/config-query-sparql-link-traversal/config/config-default.json";

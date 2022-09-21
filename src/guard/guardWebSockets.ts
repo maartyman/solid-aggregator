@@ -1,18 +1,14 @@
-import {Guard} from "./guard";
-import {QueryExecutor} from "../queryExecutor/queryExecutor";
 import {connection, Message} from "websocket";
-import {Logger} from "tslog";
-import {loggerSettings} from "../utils/loggerSettings";
-
+import {Guard} from "./guard";
 
 export class GuardWebSockets extends Guard {
-  private readonly logger = new Logger(loggerSettings);
   private readonly ws;
   private connection?: connection;
-  private notifiers = new Map<string, QueryExecutor[]>();
   private pubRegEx = new RegExp(/pub (https?:\/\/\S+)/);
+  private ackRegEx = new RegExp(/ack (https?:\/\/\S+)/);
 
   constructor(host: string) {
+    super(host);
     const WebSocketClient = require('websocket').client;
     this.ws = new WebSocketClient();
 
@@ -29,13 +25,12 @@ export class GuardWebSockets extends Guard {
         if (message.type === 'utf8') {
           const resources = this.pubRegEx.exec(message.utf8Data);
           if (resources && resources[1]) {
-            const aggregators = this.notifiers.get(resources[1].toString())
-            if (aggregators) {
-              this.logger.debug("data has changed in resource: " + resources[1].toString());
-              for (const aggregator of aggregators) {
-                aggregator.dataChanged(resources[1].toString());
-              }
-            }
+            this.dataChanged(resources[1].toString());
+            return;
+          }
+          const ack = this.ackRegEx.exec(message.utf8Data);
+          if (ack && ack[1]) {
+            this.setGuardActive(ack[1].toString(), true);
           }
         }
       });
@@ -44,30 +39,14 @@ export class GuardWebSockets extends Guard {
     this.ws.connect("ws://" + host, 'solid-0.1');
   }
 
-  evaluateResource(resource: string, aggregator: QueryExecutor): void {
+  evaluateResource(resource: string): void {
     this.logger.debug("evaluateResource: " + resource);
     if (this.connection) {
       this.connection.sendUTF('sub ' + resource);
-      let aggregators = this.notifiers.get(resource);
-      if (aggregators === undefined) {
-        this.notifiers.set(resource, [aggregator]);
-      }
-      else {
-        aggregators.push(aggregator);
-      }
-      this.logger.debug("aggregators: " + aggregators);
     }
     else {
       this.ws.on('connect', (connection: connection) => {
         connection.sendUTF('sub ' + resource);
-        let aggregators = this.notifiers.get(resource);
-        if (aggregators === undefined) {
-          this.notifiers.set(resource, [aggregator]);
-        }
-        else {
-          aggregators.push(aggregator);
-        }
-        this.logger.debug("aggregators: " + aggregators);
       });
     }
   }

@@ -5,34 +5,27 @@ import {QueryExplanation} from "./queryExplanation";
 import {loggerSettings} from "../utils/loggerSettings";
 import {KeysRdfReason} from "@comunica/reasoning-context-entries";
 import {Store} from "n3";
-import {Resource} from "../resource/resource";
 import {QueryExecutorFactory} from "./queryExecutorFactory";
-import {EventEmittingActor} from "../utils/actor-factory/eventEmittingActor";
+import {Actor} from "../utils/actor-factory/actor";
+import {Guard} from "../guard/guard";
+import {GuardPolling} from "../guard/guardPolling";
 import {GuardFactory} from "../guard/guardFactory";
 
-export class QueryExecutor extends EventEmittingActor<string, any, Resource> {
+export class QueryExecutor extends Actor<string> {
   static factory = new QueryExecutorFactory();
   private readonly logger = new Logger(loggerSettings);
   private queryEngine: QueryEngine | undefined;
   private results = new Array<Bindings>();
   private queryEngineBuild = false;
   private queryFinished = false;
-  private changedResources = new Array<Resource>();
+  private changedResources = new Array<string>();
 
-  public queryExplanation: QueryExplanation | undefined;
+  public queryExplanation: QueryExplanation;
+  private guards = new Map<string, {guard: Guard, used: boolean}>;
 
-  constructor(UUID: string) {
+  constructor(UUID:string, queryExplanation: QueryExplanation) {
     super(UUID);
-  }
-
-  public async start(queryExplanation: QueryExplanation) {
     this.queryExplanation = queryExplanation;
-
-    this.on("queryEvent", (message) => {
-      if (message === "done" && this.changedResources.length > 0) {
-        this.executeQuery();
-      }
-    });
 
     //this.QueryEngineFactory = require(this.queryExplanation.comunicaVersion? this.queryExplanation.comunicaVersion : "@comunica/query-sparql-link-traversal").QueryEngineFactory;
     this.logger.debug("comunicaVersion = " + queryExplanation.comunicaVersion);
@@ -43,7 +36,6 @@ export class QueryExecutor extends EventEmittingActor<string, any, Resource> {
       configPath: queryExplanation.comunicaContext,
     }).then((queryEngine: QueryEngine) => {
       this.queryEngine = queryEngine;
-    }).finally(() => {
       this.logger.debug(`Comunica engine build`);
       this.queryEngineBuild = true;
       this.emit("queryEngineEvent", "build");
@@ -52,11 +44,10 @@ export class QueryExecutor extends EventEmittingActor<string, any, Resource> {
   }
 
   private async executeQuery() {
-    if (!this.queryExplanation) {
-      throw new Error("query explanation for UUID: " + this.key + " is undefined!");
-    }
-
     this.queryFinished = false;
+    this.guards.forEach((value) => {
+      value.used = false;
+    })
     this.logger.debug(`Starting comunica query, with query: \n${ this.queryExplanation.queryString.toString() }`);
 
     if (this.queryEngine == undefined) {
@@ -67,7 +58,7 @@ export class QueryExecutor extends EventEmittingActor<string, any, Resource> {
 
     let parallelPromise = new Array<Promise<any>>();
     for (const resource of this.changedResources) {
-      parallelPromise.push(this.queryEngine.invalidateHttpCache(resource.key));
+      parallelPromise.push(this.queryEngine.invalidateHttpCache(resource));
     }
     this.changedResources.splice(0);
     await Promise.all(parallelPromise);
@@ -93,6 +84,7 @@ export class QueryExecutor extends EventEmittingActor<string, any, Resource> {
       this.queryFinished = true;
       this.logger.debug(`Comunica query finished`);
       this.emit("queryEvent", "done");
+      this.afterQueryCleanup();
     });
 
     bindingsStream.on('error', (error: any) => {
@@ -108,17 +100,26 @@ export class QueryExecutor extends EventEmittingActor<string, any, Resource> {
 
     input = new URL(input.toString());
     input = input.origin + input.pathname;
-    Resource.factory.getOrCreate(input, this);
+
+    let guardObject = this.guards.get(input);
+
+    if (!guardObject) {
+      guardObject = {guard: await GuardPolling.factory.getOrCreate(input), used: true};
+
+      if (!guardObject) {
+        throw new Error("guard couldn't be instantiated;");
+      }
+
+      guardObject.guard.on("ResourceChanged", this.resourceChanged.bind(this, input));
+    }
+
+    if (!guardObject.guard.isGuardActive(input)) {
+      await guardActive(guardObject.guard, input);
+    }
+
+    this.guards.set(input, guardObject);
 
     return fetch(input, init);
-  }
-
-  public dataChanged(resource: Resource) {
-    this.changedResources.push(resource);
-
-    if (this.queryFinished) {
-      this.executeQuery();
-    }
   }
 
   public getData() : Bindings[] {
@@ -132,4 +133,37 @@ export class QueryExecutor extends EventEmittingActor<string, any, Resource> {
   public isQueryFinished (): boolean {
     return this.queryFinished;
   }
+
+  private resourceChanged(resource: string, input: string) {
+    this.logger.debug("data has changed with resource: " + resource + " and input: " + input);
+    if (input === resource) {
+      this.changedResources.push(resource);
+
+      if (this.queryFinished) {
+        this.executeQuery();
+      }
+    }
+  }
+
+  private afterQueryCleanup() {
+    this.guards.forEach((value) => {
+      if (!value.used) {
+        value.guard.removeListener("ResourceChanged", this.resourceChanged);
+        if (value.guard.listenerCount("ResourceChanged") == 0) {
+          value.guard.delete();
+        }
+      }
+    });
+    if (this.changedResources.length > 0) {
+      this.executeQuery();
+    }
+  }
+}
+
+async function guardActive(guard: Guard, input: string) {
+  guard.on("guardActive", (resource: string, value: boolean) => {
+    if (resource === input && value) {
+      return;
+    }
+  });
 }

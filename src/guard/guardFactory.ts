@@ -1,32 +1,10 @@
+import {Factory} from "../utils/actor-factory/factory";
 import {Logger} from "tslog";
 import {loggerSettings} from "../utils/loggerSettings";
-import {GuardWebSockets} from "./guardWebSockets";
 import {GuardPolling} from "./guardPolling";
+import {GuardWebSockets} from "./guardWebSockets";
 import {Guard} from "./guard";
 import {connection} from "websocket";
-import {Resource} from "../resource/resource";
-
-/*
-    Do something like: on new link => new guard (via guardKeeper)
-    in guardkeeper: check if a websocket to this server is open
-    if yes: add new subscription to this websocket to the new resource
-    if no: add new websocket to the new server and add subscription to resource
-    if a websocket isn't available:
-      download resource and poll it from time to time and check for difference
-
-    guardKeeper:
-      //makes the guards => determines if the server can handle websockets
-
-    guard (interface):
-      //interface for the 2 guards
-
-    guardPolling:
-      //downloads the resource from time to time and checks if it has changed
-
-    guardWebSockets:
-      //uses websockets to check if a resource has changed
-
-    */
 
 export class GuardFactory extends Factory<string, Guard> {
   private readonly logger = new Logger(loggerSettings);
@@ -35,23 +13,33 @@ export class GuardFactory extends Factory<string, Guard> {
     super(Guard);
   }
 
-  public getOrCreate(key: string, parent?: Resource | undefined, actor?: new (key: string) => Guard) {
+  public async getOrCreate(key: string, actor?: new (key: string) => Guard) {
+    const url = new URL(key);
 
-    let temporaryPollingGuard = this.map.get(key);
+    const guardPolling = this.map.get(key);
 
-    if (!temporaryPollingGuard) {
-      temporaryPollingGuard = new GuardPolling(key);
-      this.map.set(key, temporaryPollingGuard);
-      this.changeGuardType(temporaryPollingGuard, typeof GuardWebSockets);
+    if (guardPolling) {
+      return guardPolling;
     }
 
-    if (!parent) {
-      throw new Error("Making guard, guard doesn't have a parent.");
+    const guardWebSocket = this.map.get(url.host) as GuardWebSockets;
+
+    if (guardWebSocket) {
+      guardWebSocket.evaluateResource(key);
+      return guardWebSocket;
     }
 
-    temporaryPollingGuard.makeLink(parent, temporaryPollingGuard);
+    let guard: Guard;
 
-    return temporaryPollingGuard;
+    if (await this.checkWebSocketAvailability(url.host)) {
+      const guardWebSocket = new GuardWebSockets(url.host);
+      guardWebSocket.evaluateResource(key);
+      guard = guardWebSocket;
+    } else {
+      guard = new GuardPolling(key);
+    }
+
+    return guard;
   }
 
   /*

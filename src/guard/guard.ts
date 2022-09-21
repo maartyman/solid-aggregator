@@ -1,15 +1,27 @@
+import {Actor} from "../utils/actor-factory/actor";
+import {Logger} from "tslog";
+import {loggerSettings} from "../utils/loggerSettings";
 
-//add resource: if resource already exists add queryExecutor to the notifying list
-//otherwise add resource to guard
+export class Guard extends Actor<string> {
+  protected readonly logger = new Logger(loggerSettings);
 
-import {QueryExecutor} from "../queryExecutor/queryExecutor";
-import {Resource} from "../resource/resource";
-import {GuardFactory} from "./guardFactory";
+  private guardActive = new Map<string, boolean>();
 
-export class Guard extends Actor<string, Resource, any> {
-  static factory = new GuardFactory();
+  constructor(key: string) {
+    super(key);
+  }
 
-  evaluateResource(resource: string, aggregator: QueryExecutor): void {
+  protected setGuardActive(resource: string, value: boolean) {
+    this.emit("guardActive", resource , value);
+    this.guardActive.set(resource, value);
+  }
 
+  public isGuardActive(resource: string) {
+    return this.guardActive.get(resource);
+  }
+
+  protected dataChanged(resource: string) {
+    this.emit("ResourceChanged", resource);
+    this.logger.debug("data has changed in resource: " + resource);
   }
 }

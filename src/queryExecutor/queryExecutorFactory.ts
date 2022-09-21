@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {arrayEquality} from "../utils/generalUtils";
 import {Logger} from "tslog";
 import {loggerSettings} from "../utils/loggerSettings";
+import {Factory} from "../utils/actor-factory/factory";
 
 export class QueryExecutorFactory extends Factory<string, QueryExecutor> {
   private readonly logger = new Logger(loggerSettings);
@@ -18,9 +19,6 @@ export class QueryExecutorFactory extends Factory<string, QueryExecutor> {
 
     let queryExecutor: QueryExecutor | undefined;
     this.getKeyValuePairs((value) => {
-      if (!value.queryExplanation) {
-        throw new Error("query explanation is not defined for query with UUID: " + value.key);
-      }
       if (!(value.queryExplanation.queryString === queryExplanation.queryString)) {
         this.logger.debug("queryString");
         return;

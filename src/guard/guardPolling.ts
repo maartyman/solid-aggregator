@@ -1,36 +1,15 @@
-import {Guard} from "./guard";
-import {QueryExecutor} from "../queryExecutor/queryExecutor";
-import {Logger} from "tslog";
-import {loggerSettings} from "../utils/loggerSettings";
 import * as http from "http";
 import {GuardingConfig} from "../utils/guardingConfig";
+import {Guard} from "./guard";
+import {GuardFactory} from "./guardFactory";
 
 export class GuardPolling extends Guard {
-  private readonly logger = new Logger(loggerSettings);
-  private notifiers = new Map<string, PollResource>();
-
-  evaluateResource(resource: string, aggregator: QueryExecutor): void {
-    //make sure resource isn't already polled before its added
-    const polResource = this.notifiers.get(resource)
-    if (polResource) {
-      polResource.addAggregator(aggregator);
-    }
-    else {
-      this.notifiers.set(resource, new PollResource(resource, aggregator));
-    }
-  }
-}
-
-class PollResource {
-  private readonly logger = new Logger(loggerSettings);
-  private readonly resource: string;
   private ETag?: string;
   private lastModified?: number;
-  private aggregators: QueryExecutor[];
+  static factory = new GuardFactory();
 
-  constructor(resource: string, aggregator: QueryExecutor) {
-    this.resource = resource;
-    this.aggregators = [aggregator];
+  constructor(resource: string) {
+    super(resource);
 
     this.getHead((res: http.IncomingMessage) => {
       const lastModifiedServer = res.headers["last-modified"];
@@ -42,11 +21,13 @@ class PollResource {
         this.lastModified = new Date(lastModifiedServer).valueOf();
       }
       else {
-        this.logger.error("Can't guard resource: '" + this.resource + "'. Server doesn't support Web Sockets nor does it support 'last-modified' or 'eTag' headers.");
+        this.logger.error("Can't guard resource: '" + resource + "'. Server doesn't support Web Sockets nor does it support 'last-modified' or 'eTag' headers.");
       }
-    });
 
-    this.polHeadResource();
+      this.setGuardActive(resource, true);
+
+      this.polHeadResource();
+    });
   }
 
   private polHeadResource() {
@@ -54,7 +35,7 @@ class PollResource {
       if (this.ETag) {
         if (res.headers.etag !== this.ETag) {
           this.ETag = res.headers.etag;
-          this.dataChanged();
+          this.dataChanged(this.key);
         }
       }
       else if (this.lastModified) {
@@ -63,11 +44,11 @@ class PollResource {
           const lastModifiedDateServer = new Date(lastModifiedServer).valueOf();
           if (lastModifiedDateServer != this.lastModified) {
             this.lastModified = lastModifiedDateServer;
-            this.dataChanged();
+            this.dataChanged(this.key);
           }
         }
         else {
-          this.logger.error("Last modified tag isn't set by the server for resource: '" + this.resource + "'");
+          this.logger.error("Last modified tag isn't set by the server for resource: '" + this.key + "'");
         }
       }
     });
@@ -75,22 +56,9 @@ class PollResource {
   }
 
   private getHead(callback: (res: http.IncomingMessage) => void) {
-    const req = http.request(this.resource, {
+    const req = http.request(this.key, {
       method: "HEAD"
     }, callback);
     req.end();
-  }
-
-  public addAggregator(aggregator: QueryExecutor) {
-    if (!this.aggregators.includes(aggregator)) {
-      this.aggregators.push(aggregator);
-    }
-  }
-
-  private dataChanged() {
-    for (const aggregator of this.aggregators) {
-      this.logger.debug("data has changed in resource: " + this.resource);
-      aggregator.dataChanged(this.resource);
-    }
   }
 }
