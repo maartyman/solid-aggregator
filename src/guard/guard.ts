@@ -21,7 +21,7 @@ export class Guard extends Actor<string> {
   }
 
   protected dataChanged(resource: string) {
-    this.emit("ResourceChanged", resource);
     this.logger.debug("data has changed in resource: " + resource);
+    this.emit("ResourceChanged", resource);
   }
 }

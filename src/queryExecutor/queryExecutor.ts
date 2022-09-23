@@ -9,13 +9,12 @@ import {QueryExecutorFactory} from "./queryExecutorFactory";
 import {Actor} from "../utils/actor-factory/actor";
 import {Guard} from "../guard/guard";
 import {GuardPolling} from "../guard/guardPolling";
-import {GuardFactory} from "../guard/guardFactory";
 
 export class QueryExecutor extends Actor<string> {
   static factory = new QueryExecutorFactory();
   private readonly logger = new Logger(loggerSettings);
   private queryEngine: QueryEngine | undefined;
-  private results = new Array<Bindings>();
+  private results = new Map<string, { bindings: Bindings, used: boolean }>();
   private queryEngineBuild = false;
   private queryFinished = false;
   private changedResources = new Array<string>();
@@ -45,9 +44,15 @@ export class QueryExecutor extends Actor<string> {
 
   private async executeQuery() {
     this.queryFinished = false;
+
     this.guards.forEach((value) => {
       value.used = false;
-    })
+    });
+    this.results.forEach((value) => {
+      value.used = false;
+    });
+
+
     this.logger.debug(`Starting comunica query, with query: \n${ this.queryExplanation.queryString.toString() }`);
 
     if (this.queryEngine == undefined) {
@@ -56,12 +61,17 @@ export class QueryExecutor extends Actor<string> {
 
     this.logger.debug(`Starting comunica query, with reasoningRules: \n${ this.queryExplanation.reasoningRules.toString() }`);
 
+    /*
+    TODO temporarily turning this off as it doesn't work => query explanation will give the used resources (I think)
     let parallelPromise = new Array<Promise<any>>();
     for (const resource of this.changedResources) {
       parallelPromise.push(this.queryEngine.invalidateHttpCache(resource));
     }
-    this.changedResources.splice(0);
     await Promise.all(parallelPromise);
+
+     */
+    await this.queryEngine.invalidateHttpCache();
+    this.changedResources.splice(0);
 
     const bindingsStream = await this.queryEngine.queryBindings(
       this.queryExplanation.queryString.toString(), {
@@ -74,16 +84,20 @@ export class QueryExecutor extends Actor<string> {
 
     bindingsStream.on('data', (binding: Bindings) => {
       //TODO handle delete not only additions
-      this.logger.debug(`on data: ${ binding.toString() }`);
-      this.results.push(binding);
 
-      this.emit("binding", [binding]);
+      this.logger.debug(`on data: ${ binding.toString() }`);
+      const result = this.results.get(binding.toString());
+
+      if (!result) {
+        this.results.set(binding.toString(), {bindings: binding , used: true});
+        this.emit("binding", [binding], true);
+      }
+      else {
+        result.used = true;
+      }
     });
 
     bindingsStream.on('end', () => {
-      this.queryFinished = true;
-      this.logger.debug(`Comunica query finished`);
-      this.emit("queryEvent", "done");
       this.afterQueryCleanup();
     });
 
@@ -98,6 +112,8 @@ export class QueryExecutor extends Actor<string> {
     //TODO check used resources: delete the ones that aren't used add the new ones
     //TODO possibly wait until the resource is actively guarded
 
+    const originalInput = input.toString();
+
     input = new URL(input.toString());
     input = input.origin + input.pathname;
 
@@ -110,7 +126,7 @@ export class QueryExecutor extends Actor<string> {
         throw new Error("guard couldn't be instantiated;");
       }
 
-      guardObject.guard.on("ResourceChanged", this.resourceChanged.bind(this, input));
+      guardObject.guard.on("ResourceChanged", this.resourceChanged.bind(this, originalInput));
     }
 
     if (!guardObject.guard.isGuardActive(input)) {
@@ -123,7 +139,13 @@ export class QueryExecutor extends Actor<string> {
   }
 
   public getData() : Bindings[] {
-    return this.results;
+    const bindings: Bindings[] = [];
+    this.results.forEach((value) => {
+      if (value.used) {
+        bindings.push(value.bindings);
+      }
+    });
+    return bindings;
   }
 
   public isQueryEngineBuild (): boolean {
@@ -136,8 +158,10 @@ export class QueryExecutor extends Actor<string> {
 
   private resourceChanged(resource: string, input: string) {
     this.logger.debug("data has changed with resource: " + resource + " and input: " + input);
-    if (input === resource) {
-      this.changedResources.push(resource);
+    const inputURL = new URL(input);
+    if (inputURL.origin + inputURL.pathname === resource) {
+      this.changedResources.push(input);
+      this.logger.debug("resource added to array: " + this.changedResources[0]);
 
       if (this.queryFinished) {
         this.executeQuery();
@@ -146,17 +170,29 @@ export class QueryExecutor extends Actor<string> {
   }
 
   private afterQueryCleanup() {
-    this.guards.forEach((value) => {
+    this.guards.forEach((value, key) => {
+      this.logger.debug("Resource: " + key + " is used: " + value.used);
       if (!value.used) {
         value.guard.removeListener("ResourceChanged", this.resourceChanged);
         if (value.guard.listenerCount("ResourceChanged") == 0) {
           value.guard.delete();
         }
+        this.guards.delete(key);
       }
     });
     if (this.changedResources.length > 0) {
       this.executeQuery();
     }
+    this.results.forEach((value, key) => {
+      if (!value.used){
+        this.emit("binding", [value.bindings], false);
+        this.results.delete(key);
+      }
+    });
+    printMap(this.results);
+    this.queryFinished = true;
+    this.logger.debug(`Comunica query finished`);
+    this.emit("queryEvent", "done");
   }
 }
 
@@ -166,4 +202,15 @@ async function guardActive(guard: Guard, input: string) {
       return;
     }
   });
+}
+
+function printMap(map: Map<string, { bindings: Bindings, used: boolean }>) {
+  let text = "Map content: \n";
+  map.forEach((value: {bindings: Bindings, used: boolean}, key) => {
+    text += "bindings: \n";
+    value.bindings.forEach((value, key) => {
+      text += "\t" + key.value + ": " + value.value + "\n";
+    });
+  });
+  new Logger().debug(text);
 }

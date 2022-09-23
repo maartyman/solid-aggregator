@@ -41,16 +41,21 @@ export class WebSocketHandler {
             return;
           }
 
-          queryExecutor.on("binding", (bindings: Bindings[]) => {
-            //TODO handle delete not only additions
-            connection.sendUTF(JSON.stringify({bindings: bindings}));
+          queryExecutor.on("binding", (bindings: Bindings[], newBinding: boolean) => {
+            if (newBinding) {
+              connection.sendUTF("added " + JSON.stringify({bindings: bindings}));
+            }
+            else {
+              connection.sendUTF("removed " + JSON.stringify({bindings: bindings}));
+            }
           });
 
           let bindings = queryExecutor.getData();
           if (bindings.length > 0){
-            connection.sendUTF(JSON.stringify({bindings: bindings}));
+            connection.sendUTF("added " + JSON.stringify({bindings: bindings}));
           }
 
+          /*
           if (queryExecutor.isQueryFinished()) {
             connection.close(1000, "Query finished.");
           }
@@ -61,6 +66,7 @@ export class WebSocketHandler {
               }
             });
           }
+           */
         }
       });
       connection.on('close', function(reasonCode, description) {
