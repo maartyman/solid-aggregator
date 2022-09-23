@@ -1,49 +1,37 @@
 import {IncomingMessage, ServerResponse} from "http";
 import {getHttpBody} from "../utils/getHttpBody";
-import {AggregatorKeeper} from "../aggregator/aggregatorKeeper";
+import {QueryExecutorFactory} from "../queryExecutor/queryExecutorFactory";
 import {loggerSettings} from "../utils/loggerSettings";
 import {Logger} from "tslog";
+import {QueryExecutor} from "../queryExecutor/queryExecutor";
+import {QueryExplanation} from "../queryExecutor/queryExplanation";
 
 
 export class PostHandler {
   public static async handle(req: IncomingMessage, res: ServerResponse) {
     let logger = new Logger(loggerSettings);
     logger.debug(`POST request received`);
-    let query = await getHttpBody(req);
-    logger.debug(`query: \n${JSON.stringify(query)}`);
-    let aggregator = AggregatorKeeper.getInstance().addAggregator(query);
+    let queryExplanation = await getHttpBody(req);
+    logger.debug(`query: \n${JSON.stringify(queryExplanation)}`);
+    let queryExecutor = await QueryExecutor.factory.getOrCreate(QueryExecutor.factory.queryExplanationToUUID(queryExplanation), QueryExecutor, queryExplanation);
     //TODO return HTTP 500 code on failure
-    //res.statusCode = 202;
-    //res.setHeader("Location", aggregator.UUID.toString());
-    //logger.debug(`Writing 102`);
-    /*
-    res.write("");
-    */
-    if (aggregator.isQueryEngineBuild()){
+    if (queryExecutor.isQueryEngineBuild()){
       logger.debug(`Writing 201: Created`);
       res.statusCode = 200;
-      res.setHeader("Location", aggregator.UUID.toString());
-      res.write(JSON.stringify({bindings: aggregator.getData()}));
+      res.setHeader("Location", queryExecutor.key.toString());
+      res.write(JSON.stringify({bindings: queryExecutor.getData()}));
       res.end();
     }
     else {
-      aggregator.on("queryEngineEvent", (value) => {
+      queryExecutor.on("queryEngineEvent", (value) => {
         if (value == "build") {
           logger.debug(`Writing 201: Created`);
           res.statusCode = 201;
-          res.setHeader("Location", aggregator.UUID.toString());
-          res.write(JSON.stringify({bindings: aggregator.getData()}));
+          res.setHeader("Location", queryExecutor.key.toString());
+          res.write(JSON.stringify({bindings: queryExecutor.getData()}));
           res.end();
         }
       });
     }
-
-    /*
-    aggregator.on("queryEvent", (value) => {
-      if (value == "done") {
-      }
-    });
-
-     */
   }
 }

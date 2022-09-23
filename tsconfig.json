@@ -98,12 +98,14 @@
 
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
-    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true,
+    /* Skip type checking all .d.ts files. */
+    "lib": [
+      "es2021.weakref",
+      "dom"
+    ]
   },
   "include": [
     "src"
-  ],
-  "exclude": [
-    "comunica-feature-reasoning"
   ]
 }

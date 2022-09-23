@@ -1,9 +1,10 @@
 import {HttpServer} from "./httpServer";
 import {Message, server, connection} from "websocket";
-import {AggregatorKeeper} from "../aggregator/aggregatorKeeper";
+import {QueryExecutorFactory} from "../queryExecutor/queryExecutorFactory";
 import {Bindings} from "@comunica/bindings-factory";
 import {loggerSettings} from "../utils/loggerSettings";
 import {Logger} from "tslog";
+import {QueryExecutor} from "../queryExecutor/queryExecutor";
 
 export class WebSocketHandler {
   private readonly logger = new Logger(loggerSettings);
@@ -33,28 +34,39 @@ export class WebSocketHandler {
       connection.on('message', function(message: Message) {
         if (message.type === 'utf8') {
           new Logger(loggerSettings).debug('Received Message: ' + message.utf8Data);
-          let aggregator = AggregatorKeeper.getInstance().getAggregator(message.utf8Data);
+          let queryExecutor = QueryExecutor.factory.get(message.utf8Data);
 
-          aggregator.on("binding", (bindings: Bindings[]) => {
-            //TODO handle delete not only additions
-            connection.sendUTF(JSON.stringify({bindings: bindings}));
-          });
-
-          let bindings = aggregator.getData();
-          if (bindings.length > 0){
-            connection.sendUTF(JSON.stringify({bindings: bindings}));
+          if (!queryExecutor) {
+            connection.close(1006, "Query UUID doesn't exist.");
+            return;
           }
 
-          if (aggregator.isQueryFinished()) {
+          queryExecutor.on("binding", (bindings: Bindings[], newBinding: boolean) => {
+            if (newBinding) {
+              connection.sendUTF("added " + JSON.stringify({bindings: bindings}));
+            }
+            else {
+              connection.sendUTF("removed " + JSON.stringify({bindings: bindings}));
+            }
+          });
+
+          let bindings = queryExecutor.getData();
+          if (bindings.length > 0){
+            connection.sendUTF("added " + JSON.stringify({bindings: bindings}));
+          }
+
+          /*
+          if (queryExecutor.isQueryFinished()) {
             connection.close(1000, "Query finished.");
           }
           else {
-            aggregator.on("queryEvent", (message: string) => {
+            queryExecutor.on("queryEvent", (message: string) => {
               if (message === "error") {
                 connection.close(1011, "Internal error");
               }
             });
           }
+           */
         }
       });
       connection.on('close', function(reasonCode, description) {
