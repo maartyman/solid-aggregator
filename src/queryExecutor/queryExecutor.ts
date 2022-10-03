@@ -17,6 +17,7 @@ export class QueryExecutor extends Actor<string> {
   private results = new Map<string, { bindings: Bindings, used: boolean }>();
   private queryEngineBuild = false;
   private queryFinished = false;
+  private initializationFinished = false;
   private changedResources = new Array<string>();
 
   public queryExplanation: QueryExplanation;
@@ -33,12 +34,14 @@ export class QueryExecutor extends Actor<string> {
     this.logger.debug("comunica context path = " + queryExplanation.comunicaContext);
     new queryEngineFactory().create({
       configPath: queryExplanation.comunicaContext,
-    }).then((queryEngine: QueryEngine) => {
+    }).then(async (queryEngine: QueryEngine) => {
       this.queryEngine = queryEngine;
       this.logger.debug(`Comunica engine build`);
       this.queryEngineBuild = true;
       this.emit("queryEngineEvent", "build");
-      this.executeQuery();
+      await this.executeQuery();
+      this.emit("queryEvent", "initialized");
+      this.initializationFinished = true;
     });
   }
 
@@ -154,6 +157,10 @@ export class QueryExecutor extends Actor<string> {
 
   public isQueryFinished (): boolean {
     return this.queryFinished;
+  }
+
+  public isInitializationFinished (): boolean {
+    return this.initializationFinished;
   }
 
   private resourceChanged(resource: string, input: string) {

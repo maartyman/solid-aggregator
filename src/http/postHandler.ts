@@ -15,13 +15,12 @@ export class PostHandler {
     logger.debug(`query: \n${JSON.stringify(queryExplanation)}`);
     let queryExecutor = await QueryExecutor.factory.getOrCreate(QueryExecutor.factory.queryExplanationToUUID(queryExplanation), QueryExecutor, queryExplanation);
     //TODO return HTTP 500 code on failure
-    if (queryExecutor.isQueryEngineBuild()){
-      logger.debug(`Writing 201: Created`);
-      res.statusCode = 200;
-      res.setHeader("Location", queryExecutor.key.toString());
-      res.write(JSON.stringify({bindings: queryExecutor.getData()}));
-      res.end();
-    }
+    logger.debug(`Writing 200: Ok`);
+    res.statusCode = 200;
+    res.setHeader("Location", queryExecutor.key.toString());
+    res.write(JSON.stringify({bindings: queryExecutor.getData()}));
+    res.end();
+    /*
     else {
       queryExecutor.on("queryEngineEvent", (value) => {
         if (value == "build") {
@@ -33,5 +32,6 @@ export class PostHandler {
         }
       });
     }
+     */
   }
 }

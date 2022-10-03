@@ -37,7 +37,7 @@ export class WebSocketHandler {
           let queryExecutor = QueryExecutor.factory.get(message.utf8Data);
 
           if (!queryExecutor) {
-            connection.close(1006, "Query UUID doesn't exist.");
+            connection.sendUTF("Query UUID doesn't exist.");
             return;
           }
 
@@ -47,6 +47,12 @@ export class WebSocketHandler {
             }
             else {
               connection.sendUTF("removed " + JSON.stringify({bindings: bindings}));
+            }
+          });
+
+          queryExecutor.on("queryEvent", (event: string) => {
+            if (event === "initialized") {
+              connection.sendUTF("initialized");
             }
           });
 
