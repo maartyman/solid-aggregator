@@ -1,6 +1,5 @@
 import {HttpServer} from "./httpServer";
 import {Message, server, connection} from "websocket";
-import {QueryExecutorFactory} from "../queryExecutor/queryExecutorFactory";
 import {Bindings} from "@comunica/bindings-factory";
 import {loggerSettings} from "../utils/loggerSettings";
 import {Logger} from "tslog";
@@ -10,6 +9,10 @@ export class WebSocketHandler {
   private readonly logger = new Logger(loggerSettings);
   private static instance: WebSocketHandler | null;
   private wsServer;
+  private readonly protocolVersion = "1.0";
+  private readonly generalProtocol = "solid-aggregator-" + this.protocolVersion;
+  private readonly bindingProtocol = this.generalProtocol + "#bindings";
+  private readonly readyProtocol = this.generalProtocol + "#ready";
 
   constructor() {
     this.wsServer = new server({
@@ -17,7 +20,7 @@ export class WebSocketHandler {
       autoAcceptConnections: false
     });
 
-    this.wsServer.on('request', function(request) {
+    this.wsServer.on('request', (request) => {
       /*
       //TODO do not auto accept make a origin allowed function
       if (!originIsAllowed(request.origin)) {
@@ -28,12 +31,13 @@ export class WebSocketHandler {
       }
        */
 
-      var connection: connection = request.accept('bindings', request.origin);
+      const connection: connection = request.accept(request.requestedProtocols[0], request.origin);
 
       new Logger(loggerSettings).debug("Connection accepted.");
-      connection.on('message', function(message: Message) {
+      connection.on('message', (message: Message) => {
         if (message.type === 'utf8') {
-          new Logger(loggerSettings).debug('Received Message: ' + message.utf8Data);
+          const logger = new Logger(loggerSettings);
+          logger.debug('Received Message: ' + message.utf8Data);
           let queryExecutor = QueryExecutor.factory.get(message.utf8Data);
 
           if (!queryExecutor) {
@@ -41,38 +45,37 @@ export class WebSocketHandler {
             return;
           }
 
-          queryExecutor.on("binding", (bindings: Bindings[], newBinding: boolean) => {
-            if (newBinding) {
-              connection.sendUTF("added " + JSON.stringify({bindings: bindings}));
-            }
-            else {
-              connection.sendUTF("removed " + JSON.stringify({bindings: bindings}));
-            }
-          });
 
-          queryExecutor.on("queryEvent", (event: string) => {
-            if (event === "initialized") {
-              connection.sendUTF("initialized");
-            }
-          });
-
-          let bindings = queryExecutor.getData();
-          if (bindings.length > 0){
-            connection.sendUTF("added " + JSON.stringify({bindings: bindings}));
-          }
-
-          /*
-          if (queryExecutor.isQueryFinished()) {
-            connection.close(1000, "Query finished.");
-          }
-          else {
-            queryExecutor.on("queryEvent", (message: string) => {
-              if (message === "error") {
-                connection.close(1011, "Internal error");
+          if (connection.protocol === this.readyProtocol || connection.protocol === this.generalProtocol) {
+            queryExecutor.on("queryEvent", (event: string) => {
+              logger.debug("queryEvent: " + event);
+              if (event === "initialized") {
+                logger.debug("sending initialized to client");
+                connection.sendUTF("initialized");
               }
             });
+
+            if (queryExecutor.isInitializationFinished()) {
+              logger.debug("sending initialized to client");
+              connection.sendUTF("initialized");
+            }
           }
-           */
+
+          if (connection.protocol === this.bindingProtocol || connection.protocol === this.generalProtocol) {
+            queryExecutor.on("binding", (bindings: Bindings[], newBinding: boolean) => {
+              if (newBinding) {
+                connection.sendUTF("added " + JSON.stringify({bindings: bindings}));
+              }
+              else {
+                connection.sendUTF("removed " + JSON.stringify({bindings: bindings}));
+              }
+            });
+
+            let bindings = queryExecutor.getData();
+            if (bindings.length > 0){
+              connection.sendUTF("added " + JSON.stringify({bindings: bindings}));
+            }
+          }
         }
       });
       connection.on('close', function(reasonCode, description) {

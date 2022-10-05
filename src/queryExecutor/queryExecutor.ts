@@ -39,9 +39,7 @@ export class QueryExecutor extends Actor<string> {
       this.logger.debug(`Comunica engine build`);
       this.queryEngineBuild = true;
       this.emit("queryEngineEvent", "build");
-      await this.executeQuery();
-      this.emit("queryEvent", "initialized");
-      this.initializationFinished = true;
+      this.executeQuery();
     });
   }
 
@@ -177,6 +175,10 @@ export class QueryExecutor extends Actor<string> {
   }
 
   private afterQueryCleanup() {
+    if (!this.initializationFinished) {
+      this.emit("queryEvent", "initialized");
+      this.initializationFinished = true;
+    }
     this.guards.forEach((value, key) => {
       this.logger.debug("Resource: " + key + " is used: " + value.used);
       if (!value.used) {
@@ -187,9 +189,6 @@ export class QueryExecutor extends Actor<string> {
         this.guards.delete(key);
       }
     });
-    if (this.changedResources.length > 0) {
-      this.executeQuery();
-    }
     this.results.forEach((value, key) => {
       if (!value.used){
         this.emit("binding", [value.bindings], false);
@@ -200,6 +199,9 @@ export class QueryExecutor extends Actor<string> {
     this.queryFinished = true;
     this.logger.debug(`Comunica query finished`);
     this.emit("queryEvent", "done");
+    if (this.changedResources.length > 0) {
+      this.executeQuery();
+    }
   }
 }
 
