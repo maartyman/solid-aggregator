@@ -63,17 +63,23 @@ export class WebSocketHandler {
 
           if (connection.protocol === this.bindingProtocol || connection.protocol === this.generalProtocol) {
             queryExecutor.on("binding", (bindings: Bindings[], newBinding: boolean) => {
+              let startWord = "";
               if (newBinding) {
-                connection.sendUTF("added " + JSON.stringify({bindings: bindings}));
+                startWord = "added ";
               }
               else {
-                connection.sendUTF("removed " + JSON.stringify({bindings: bindings}));
+                startWord = "removed ";
+              }
+              for (const binding of bindings) {
+                connection.sendUTF(startWord + JSON.stringify(binding));
               }
             });
 
             let bindings = queryExecutor.getData();
             if (bindings.length > 0){
-              connection.sendUTF("added " + JSON.stringify({bindings: bindings}));
+              for (const binding of bindings) {
+                connection.sendUTF("added " + JSON.stringify(binding));
+              }
             }
           }
         }

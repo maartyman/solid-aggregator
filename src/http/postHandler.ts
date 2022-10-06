@@ -18,7 +18,7 @@ export class PostHandler {
     logger.debug(`Writing 200: Ok`);
     res.statusCode = 200;
     res.setHeader("Location", queryExecutor.key.toString());
-    res.write(JSON.stringify({bindings: queryExecutor.getData()}));
+    res.write(JSON.stringify(queryExecutor.getData()));
     res.end();
     /*
     else {

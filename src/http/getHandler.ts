@@ -21,7 +21,7 @@ export class GetHandler {
       res.setHeader("Content-Type", "text/text");
 
       // @ts-ignore
-      const returnValue = JSON.stringify({bindings: queryExecutor.getData()});
+      const returnValue = JSON.stringify(queryExecutor.getData());
       logger.debug(`result: \n${returnValue}`);
       res.write(returnValue);
 
