@@ -6,7 +6,12 @@ export async function getHttpBody(req: IncomingMessage) : Promise<QueryExplanati
   req.on('data', (chunk) => {
     body += chunk;
   });
-  await ended(req);
+
+  await new Promise<void>((resolve, reject) => {
+    req.on("end", () => {
+      resolve();
+    });
+  });
 
   const json = JSON.parse(body);
 
@@ -20,10 +25,4 @@ export async function getHttpBody(req: IncomingMessage) : Promise<QueryExplanati
   );
 
   return queryExplaination
-}
-
-async function ended(req: IncomingMessage) : Promise<void> {
-  req.on("end", () => {
-    return;
-  });
 }

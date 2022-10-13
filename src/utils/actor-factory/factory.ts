@@ -20,10 +20,10 @@ export class Factory<Key, Value extends Actor<Key>> {
   /**
    * The getKeyValuePairs() method executes a provided function once per each key/value pair in the Map object, in insertion order.
    *
-   * @param callbackFn - Function to execute for each entry in the map. It takes the following arguments: value (Value), key (Key), map (Map<Key, Value>)
+   * @param cb - Function to execute for each entry in the map. It takes the following arguments: value (Value), key (Key), map (Map<Key, Value>)
    */
-  public getKeyValuePairs(callbackFn: (value: Value, key: Key, map: Map<Key, Value>) => void) {
-    this.map.forEach(callbackFn);
+  public getKeyValuePairs(cb: (value: Value, key: Key, map: Map<Key, Value>) => void) {
+    this.map.forEach(cb);
   }
 
   /**
