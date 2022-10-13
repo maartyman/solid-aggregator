@@ -9,6 +9,7 @@ import {QueryExecutorFactory} from "./queryExecutorFactory";
 import {Actor} from "../utils/actor-factory/actor";
 import {Guard} from "../guard/guard";
 import {GuardPolling} from "../guard/guardPolling";
+import {LocalQueryEngineFactory} from "../queryEngineFactory/localQueryEngineFactory";
 
 export class QueryExecutor extends Actor<string> {
   static factory = new QueryExecutorFactory();
@@ -27,14 +28,13 @@ export class QueryExecutor extends Actor<string> {
     super(UUID);
     this.queryExplanation = queryExplanation;
 
-    //this.QueryEngineFactory = require(this.queryExplanation.comunicaVersion? this.queryExplanation.comunicaVersion : "@comunica/query-sparql-link-traversal").QueryEngineFactory;
-    this.logger.debug("comunicaVersion = " + queryExplanation.comunicaVersion);
-    const queryEngineFactory = require(queryExplanation.comunicaVersion.toString()).QueryEngineFactory;
+    this.logger.debug("comunicaVersion = " + queryExplanation.comunicaVersion.toString());
+    this.logger.debug("comunica context path = " + queryExplanation.comunicaContext.toString());
 
-    this.logger.debug("comunica context path = " + queryExplanation.comunicaContext);
-    new queryEngineFactory().create({
-      configPath: queryExplanation.comunicaContext,
-    }).then(async (queryEngine: QueryEngine) => {
+    LocalQueryEngineFactory.getOrCreate(
+      queryExplanation.comunicaVersion.toString(),
+      queryExplanation.comunicaContext.toString()
+    ).then((queryEngine: QueryEngine) => {
       this.queryEngine = queryEngine;
       this.logger.debug(`Comunica engine build`);
       this.queryEngineBuild = true;
@@ -221,5 +221,5 @@ function printMap(map: Map<string, { bindings: Bindings, used: boolean }>) {
       text += "\t" + key.value + ": " + value.value + "\n";
     });
   });
-  new Logger().debug(text);
+  new Logger(loggerSettings).debug(text);
 }
