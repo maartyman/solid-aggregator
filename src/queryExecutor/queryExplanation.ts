@@ -1,5 +1,6 @@
 import { IDataSource } from '@comunica/types';
 import {resolveUndefined} from "../utils/generalUtils";
+import path from "path";
 
 export class QueryExplanation {
   public readonly queryString: String;
@@ -53,6 +54,18 @@ export class QueryExplanation {
         break;
       case "link-traversal-follow-match-query":
         this.comunicaContext = "node_modules/@comunica/config-query-sparql-link-traversal/config/config-follow-match-query.json";
+        break;
+      case "link-traversal-solid-default":
+        this.comunicaContext = "node_modules/@comunica/config-query-sparql-link-traversal/config/config-solid-default.json";
+        break;
+      case "link-traversal-solid-prov-sources":
+        this.comunicaContext = "node_modules/@comunica/config-query-sparql-link-traversal/config/config-solid-prov-sources.json";
+        break;
+      case "link-traversal-solid-shapetrees":
+        this.comunicaContext = "node_modules/@comunica/config-query-sparql-link-traversal/config/config-solid-shapetrees.json";
+        break;
+      case "link-traversal-solid-single-pod":
+        this.comunicaContext = "node_modules/@comunica/config-query-sparql-link-traversal/config/config-single-pod.json";
         break;
       case "solid-default":
         this.comunicaContext = "node_modules/@comunica/config-query-sparql-solid/config/config-default.json";
