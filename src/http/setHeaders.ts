@@ -1,4 +1,4 @@
-import {QueryExecutor} from "../queryExecutor/queryExecutor";
+import {QueryExecutor} from "../queryExecutorPackage/queryExecutor/queryExecutor";
 import {ServerResponse} from "http";
 import {Logger} from "tslog";
 

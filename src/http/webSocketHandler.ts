@@ -3,7 +3,7 @@ import {Message, server, connection} from "websocket";
 import {Bindings} from "@comunica/bindings-factory";
 import {loggerSettings} from "../utils/loggerSettings";
 import {Logger} from "tslog";
-import {QueryExecutor} from "../queryExecutor/queryExecutor";
+import {QueryExecutor} from "../queryExecutorPackage/queryExecutor/queryExecutor";
 
 export class WebSocketHandler {
   private readonly logger = new Logger(loggerSettings);

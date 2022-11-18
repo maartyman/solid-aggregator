@@ -1,19 +1,3 @@
-export function resolveUndefinedString(string: String | undefined) : String {
-  return string? string : "";
-}
-
-export function resolveUndefined<T>(val: T | undefined, defaultValue?: T) : T {
-  if (val == undefined) {
-    if (defaultValue == undefined) {
-      throw new Error('value undefined');
-    }
-    else {
-      return defaultValue;
-    }
-  }
-  return val;
-}
-
 export function arrayEquality(array1: [any], array2: [any]): boolean {
   for (const element1 of array1) {
     let equal = false;
@@ -41,5 +25,3 @@ export function arrayEquality(array1: [any], array2: [any]): boolean {
   }
   return true;
 }
-
-

@@ -1,6 +1,6 @@
 import {Actor} from "../utils/actor-factory/actor";
 import {Logger} from "tslog";
-import {loggerSettings} from "../utils/loggerSettings";
+import {loggerSettings} from "../../utils/loggerSettings";
 
 export class Guard extends Actor<string> {
   protected readonly logger = new Logger(loggerSettings);

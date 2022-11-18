@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/maartyman/solid-aggregator-server#readme",
   "devDependencies": {
+    "@types/n3": "^1.10.4",
     "typescript": "^4.7.4"
   },
   "dependencies": {
@@ -31,6 +32,7 @@
     "@comunica/query-sparql-reasoning": "^0.2.0",
     "@comunica/query-sparql-solid": "^2.2.0",
     "@comunica/reasoning-context-entries": "^0.2.0",
+    "@comunica/bus-normalize-rule": "^0.2.0",
     "@types/commander": "^2.12.2",
     "@types/http-server": "^0.12.1",
     "@types/websocket": "^1.0.5",

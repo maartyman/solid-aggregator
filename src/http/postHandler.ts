@@ -1,10 +1,10 @@
 import {IncomingMessage, ServerResponse} from "http";
 import {getHttpBody} from "../utils/getHttpBody";
-import {QueryExecutorFactory} from "../queryExecutor/queryExecutorFactory";
+import {QueryExecutorFactory} from "../queryExecutorPackage/queryExecutor/queryExecutorFactory";
 import {loggerSettings} from "../utils/loggerSettings";
 import {Logger} from "tslog";
-import {QueryExecutor} from "../queryExecutor/queryExecutor";
-import {QueryExplanation} from "../queryExecutor/queryExplanation";
+import {QueryExecutor} from "../queryExecutorPackage/queryExecutor/queryExecutor";
+import {QueryExplanation} from "../queryExecutorPackage/queryExecutor/queryExplanation";
 
 
 export class PostHandler {

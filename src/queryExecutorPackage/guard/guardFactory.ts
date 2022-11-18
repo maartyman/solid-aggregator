@@ -1,6 +1,6 @@
 import {Factory} from "../utils/actor-factory/factory";
 import {Logger} from "tslog";
-import {loggerSettings} from "../utils/loggerSettings";
+import {loggerSettings} from "../../utils/loggerSettings";
 import {GuardPolling} from "./guardPolling";
 import {GuardWebSockets} from "./guardWebSockets";
 import {Guard} from "./guard";
@@ -35,8 +35,10 @@ export class GuardFactory extends Factory<string, Guard> {
       const guardWebSocket = new GuardWebSockets(url.host);
       guardWebSocket.evaluateResource(key);
       guard = guardWebSocket;
+      this.map.set(url.host, guard);
     } else {
       guard = new GuardPolling(key);
+      this.map.set(key, guard);
     }
 
     return guard;

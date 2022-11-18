@@ -1,6 +1,5 @@
 import { IDataSource } from '@comunica/types';
-import {resolveUndefined} from "../utils/generalUtils";
-import path from "path";
+import {resolveUndefined} from "../utils/resolveUndefined";
 
 export class QueryExplanation {
   public readonly queryString: String;

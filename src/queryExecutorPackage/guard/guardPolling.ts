@@ -1,5 +1,5 @@
 import * as http from "http";
-import {GuardingConfig} from "../utils/guardingConfig";
+import {GuardingConfig} from "../../utils/guardingConfig";
 import {Guard} from "./guard";
 import {GuardFactory} from "./guardFactory";
 

@@ -1,10 +1,10 @@
 import {QueryExecutor} from "./queryExecutor";
 import {QueryExplanation} from "./queryExplanation";
 import { v4 as uuidv4 } from 'uuid';
-import {arrayEquality} from "../utils/generalUtils";
 import {Logger} from "tslog";
-import {loggerSettings} from "../utils/loggerSettings";
+import {loggerSettings} from "../../utils/loggerSettings";
 import {Factory} from "../utils/actor-factory/factory";
+import {arrayEquality} from "../utils/arrayEquality";
 
 export class QueryExecutorFactory extends Factory<string, QueryExecutor> {
   private readonly logger = new Logger(loggerSettings);

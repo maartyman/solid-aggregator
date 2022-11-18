@@ -1,9 +1,9 @@
 import {IncomingMessage, ServerResponse} from "http";
-import {resolveUndefinedString} from "../utils/generalUtils";
 import {Logger} from "tslog";
 import {loggerSettings} from "../utils/loggerSettings";
-import {QueryExecutor} from "../queryExecutor/queryExecutor";
+import {QueryExecutor} from "../queryExecutorPackage/queryExecutor/queryExecutor";
 import {setHeaders} from "./setHeaders";
+import {resolveUndefined} from "../queryExecutorPackage/utils/resolveUndefined";
 
 
 export class GetHandler {
@@ -11,7 +11,7 @@ export class GetHandler {
     const logger = new Logger(loggerSettings);
     logger.debug(`GET request received`);
     logger.debug(`url: \n${req.url}`);
-    const queryUUID = resolveUndefinedString(req.url).split("/")[1];
+    const queryUUID = resolveUndefined(req.url, "").split("/")[1];
     logger.debug(`query: \n${queryUUID}`);
     const queryExecutor = QueryExecutor.factory.get(queryUUID);
 

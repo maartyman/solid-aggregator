@@ -1,11 +1,11 @@
 import {HttpServer} from "./http/httpServer";
-import {QueryExecutorFactory} from "./queryExecutor/queryExecutorFactory";
+import {QueryExecutorFactory} from "./queryExecutorPackage/queryExecutor/queryExecutorFactory";
 import {WebSocketHandler} from "./http/webSocketHandler";
 import {program} from "commander";
 import {GuardingConfig} from "./utils/guardingConfig";
 import {Logger} from "tslog";
 import {loggerSettings} from "./utils/loggerSettings";
-import {GuardFactory} from "./guard/guardFactory";
+import {GuardFactory} from "./queryExecutorPackage/guard/guardFactory";
 
 program
   .name("query-queryExecutor")

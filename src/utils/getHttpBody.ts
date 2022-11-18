@@ -1,5 +1,5 @@
 import {IncomingMessage} from "http";
-import {QueryExplanation} from "../queryExecutor/queryExplanation";
+import {QueryExplanation} from "../queryExecutorPackage/queryExecutor/queryExplanation";
 
 export async function getHttpBody(req: IncomingMessage) : Promise<QueryExplanation> {
   let body = "";
