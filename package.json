@@ -1,8 +1,13 @@
 {
   "name": "solid-aggregator-server",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "solid-aggregator-server",
   "main": "bin/main.js",
+  "main": "./bin/main.js",
+  "types": "./src/main.ts",
+  "bin": {
+    "community-solid-server": "bin/main.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",

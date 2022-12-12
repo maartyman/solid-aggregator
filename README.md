@@ -2,6 +2,16 @@
 
 ### This package is currently under active development. Proper functionality is not guaranteed.
 
+To install the server globally run this command:
+```
+npm install -g solid-aggregator-server
+```
+Then to start the server you can use this command:
+```
+solid-aggregator-server serve
+```
+
+## Run locally
 To set up an instance of the Solid Aggregator Server, you first have to install the required dependencies.
 ```
 npm install
