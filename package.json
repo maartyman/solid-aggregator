@@ -1,18 +1,17 @@
 {
   "name": "solid-aggregator-server",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "solid-aggregator-server",
-  "main": "bin/main.js",
-  "main": "./bin/main.js",
-  "types": "./src/main.ts",
+  "main": "./src/main.js",
+  "types": "./src/main.d.ts",
   "bin": {
-    "solid-aggregator-server": "bin/main.js"
+    "solid-aggregator-server": "./bin/server.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
-    "start": "node bin/main.js",
-    "build-start": "npx tsc && node bin/main.js"
+    "start": "node bin/server.js",
+    "build-start": "npx tsc && node bin/server.js"
   },
   "repository": {
     "type": "git",
