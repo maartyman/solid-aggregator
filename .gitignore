@@ -1,5 +1,4 @@
 # -- custom: --
-bin/
 log/
 .idea/
 ../solid-agregator-client/client-examples/tests/
