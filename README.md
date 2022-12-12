@@ -6,13 +6,13 @@ To set up an instance of the Solid Aggregator Server, you first have to install 
 ```
 npm install
 ```
-Then build the project and run it with the following commands to first build and then run the server.
+Then build and run the server with the following commands:
 ```
 npm run build
 npm start serve
 ```
-To build and run the server use this command.
+You could also build and run the server in one command:
 ```
-npm build-start serve
+npm run build-start serve
 ```
 Use the `-h` tag to get help for the different CLI options.

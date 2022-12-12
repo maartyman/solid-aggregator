@@ -84,19 +84,19 @@ export class GuardFactory extends Factory<string, Guard> {
 
   private async checkWebSocketAvailability(host: string): Promise<boolean> {
     //TODO is this the best solution?
-    this.logger.debug("Checking pod availability");
+    this.logger.debug("Checking pod availability:", host);
     const WebSocketClient = require('websocket').client;
     const ws = new WebSocketClient();
 
     const promise = new Promise<boolean>( resolve => {
       ws.on('connect', (connection: connection) => {
-        this.logger.debug("Checking pod availability: connection succeeded");
+        this.logger.debug("Checking pod availability: connection succeeded:", host);
         ws.abort();
         resolve(true);
       });
 
       ws.on("connectFailed", () => {
-        this.logger.debug("Checking pod availability: connection failed");
+        this.logger.debug("Checking pod availability: connection failed:", host);
         ws.abort();
         resolve(false);
       });

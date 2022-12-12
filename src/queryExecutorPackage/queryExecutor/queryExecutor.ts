@@ -157,6 +157,8 @@ export class QueryExecutor extends Actor<string> {
     input = new URL(input.toString());
     input = input.origin + input.pathname;
 
+    this.logger.debug("Fetch resource:", input);
+
     let guardObject = this.guards.get(input);
 
     if (!guardObject) {
