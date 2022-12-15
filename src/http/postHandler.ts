@@ -1,11 +1,8 @@
 import {IncomingMessage, ServerResponse} from "http";
 import {getHttpBody} from "../utils/getHttpBody";
-import {QueryExecutorFactory} from "../queryExecutorPackage/queryExecutor/queryExecutorFactory";
 import {loggerSettings} from "../utils/loggerSettings";
 import {Logger} from "tslog";
-import {QueryExecutor} from "../queryExecutorPackage/queryExecutor/queryExecutor";
-import {QueryExplanation} from "../queryExecutorPackage/queryExecutor/queryExplanation";
-
+import {QueryExecutor} from "incremunica";
 
 export class PostHandler {
   public static async handle(req: IncomingMessage, res: ServerResponse) {
@@ -13,12 +10,17 @@ export class PostHandler {
     logger.debug(`POST request received`);
     let queryExplanation = await getHttpBody(req);
     logger.debug(`query: \n${JSON.stringify(queryExplanation)}`);
-    let queryExecutor = await QueryExecutor.factory.getOrCreate(QueryExecutor.factory.queryExplanationToUUID(queryExplanation), QueryExecutor, queryExplanation);
+    let queryExecutor = await QueryExecutor.factory.getOrCreate(
+      QueryExecutor.factory.queryExplanationToUUID(queryExplanation),
+      QueryExecutor,
+      queryExplanation,
+      true
+    );
     //TODO return HTTP 500 code on failure
     logger.debug(`Writing 200: Ok`);
     res.statusCode = 200;
     res.setHeader("Location", queryExecutor.key.toString());
-    res.write(JSON.stringify(queryExecutor.getData()));
+    res.write(JSON.stringify(await queryExecutor.getData()));
     res.end();
     /*
     else {

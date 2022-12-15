@@ -12,9 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetHandler = void 0;
 const tslog_1 = require("tslog");
 const loggerSettings_1 = require("../utils/loggerSettings");
-const queryExecutor_1 = require("../queryExecutorPackage/queryExecutor/queryExecutor");
+const incremunica_1 = require("incremunica");
 const setHeaders_1 = require("./setHeaders");
-const resolveUndefined_1 = require("../queryExecutorPackage/utils/resolveUndefined");
+const resolveUndefined_1 = require("../utils/resolveUndefined");
 class GetHandler {
     static handle(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -23,7 +23,7 @@ class GetHandler {
             logger.debug(`url: \n${req.url}`);
             const queryUUID = (0, resolveUndefined_1.resolveUndefined)(req.url, "").split("/")[1];
             logger.debug(`query: \n${queryUUID}`);
-            const queryExecutor = queryExecutor_1.QueryExecutor.factory.get(queryUUID);
+            const queryExecutor = incremunica_1.QueryExecutor.factory.get(queryUUID);
             const hasNoError = (0, setHeaders_1.setHeaders)(logger, res, queryExecutor);
             if (hasNoError) {
                 res.write("");

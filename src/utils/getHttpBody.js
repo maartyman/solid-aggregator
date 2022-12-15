@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getHttpBody = void 0;
-const queryExplanation_1 = require("../queryExecutorPackage/queryExecutor/queryExplanation");
+const incremunica_1 = require("incremunica");
 function getHttpBody(req) {
     return __awaiter(this, void 0, void 0, function* () {
         let body = "";
@@ -23,7 +23,7 @@ function getHttpBody(req) {
             });
         });
         const json = JSON.parse(body);
-        let queryExplaination = new queryExplanation_1.QueryExplanation(json.queryString, json.sources, json.comunicaVersion, json.comunicaContext, json.reasoningRules, json.lenient);
+        let queryExplaination = new incremunica_1.QueryExplanation(json.queryString, json.sources, json.comunicaVersion, json.comunicaContext, json.reasoningRules, json.lenient);
         return queryExplaination;
     });
 }

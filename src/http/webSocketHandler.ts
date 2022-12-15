@@ -1,9 +1,8 @@
 import {HttpServer} from "./httpServer";
 import {Message, server, connection} from "websocket";
-import {Bindings} from "@comunica/bindings-factory";
 import {loggerSettings} from "../utils/loggerSettings";
 import {Logger} from "tslog";
-import {QueryExecutor} from "../queryExecutorPackage/queryExecutor/queryExecutor";
+import {QueryExecutor} from "incremunica";
 
 export class WebSocketHandler {
   private readonly logger = new Logger(loggerSettings);
@@ -62,7 +61,7 @@ export class WebSocketHandler {
           }
 
           if (connection.protocol === this.bindingProtocol || connection.protocol === this.generalProtocol) {
-            queryExecutor.on("binding", (bindings: Bindings[], newBinding: boolean) => {
+            queryExecutor.on("binding", (bindings, newBinding) => {
               let startWord = "";
               if (newBinding) {
                 startWord = "added ";
@@ -70,17 +69,16 @@ export class WebSocketHandler {
               else {
                 startWord = "removed ";
               }
-              for (const binding of bindings) {
-                connection.sendUTF(startWord + JSON.stringify(binding));
-              }
+              connection.sendUTF(startWord + JSON.stringify(bindings));
             });
 
-            let bindings = queryExecutor.getData();
-            if (bindings.length > 0){
-              for (const binding of bindings) {
-                connection.sendUTF("added " + JSON.stringify(binding));
+            queryExecutor.getData().then((bindings) => {
+              if (bindings.length > 0){
+                for (const binding of bindings) {
+                  connection.sendUTF("added " + JSON.stringify(binding));
+                }
               }
-            }
+            });
           }
         }
       });

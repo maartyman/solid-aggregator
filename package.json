@@ -1,9 +1,9 @@
 {
   "name": "solid-aggregator-server",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "solid-aggregator-server",
   "main": "./src/main.js",
-  "types": "./src/main.d.ts",
+  "types": "./src/main.ts",
   "bin": {
     "solid-aggregator-server": "./bin/server.js"
   },
@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@comunica/bindings-factory": "^2.2.0",
+    "@comunica/bus-normalize-rule": "^0.2.0",
     "@comunica/config-query-sparql-link-traversal": "^0.0.2-alpha.5.0",
     "@comunica/config-reasoning": "^0.2.0",
     "@comunica/query-sparql-link-traversal": "^0.0.2-alpha.5.0",
@@ -36,12 +37,12 @@
     "@comunica/query-sparql-reasoning": "^0.2.0",
     "@comunica/query-sparql-solid": "^2.2.0",
     "@comunica/reasoning-context-entries": "^0.2.0",
-    "@comunica/bus-normalize-rule": "^0.2.0",
     "@types/commander": "^2.12.2",
     "@types/http-server": "^0.12.1",
     "@types/websocket": "^1.0.5",
     "commander": "^9.4.0",
     "events": "^3.3.0",
+    "incremunica": "file:../incremunica",
     "n3": "^1.16.2",
     "tslog": "^3.3.4",
     "uuid": "^8.3.2",

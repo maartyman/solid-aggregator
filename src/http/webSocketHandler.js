@@ -5,7 +5,7 @@ const httpServer_1 = require("./httpServer");
 const websocket_1 = require("websocket");
 const loggerSettings_1 = require("../utils/loggerSettings");
 const tslog_1 = require("tslog");
-const queryExecutor_1 = require("../queryExecutorPackage/queryExecutor/queryExecutor");
+const incremunica_1 = require("incremunica");
 class WebSocketHandler {
     constructor() {
         this.logger = new tslog_1.Logger(loggerSettings_1.loggerSettings);
@@ -33,7 +33,7 @@ class WebSocketHandler {
                 if (message.type === 'utf8') {
                     const logger = new tslog_1.Logger(loggerSettings_1.loggerSettings);
                     logger.debug('Received Message: ' + message.utf8Data);
-                    let queryExecutor = queryExecutor_1.QueryExecutor.factory.get(message.utf8Data);
+                    let queryExecutor = incremunica_1.QueryExecutor.factory.get(message.utf8Data);
                     if (!queryExecutor) {
                         connection.sendUTF("Query UUID doesn't exist.");
                         return;
@@ -60,16 +60,15 @@ class WebSocketHandler {
                             else {
                                 startWord = "removed ";
                             }
-                            for (const binding of bindings) {
-                                connection.sendUTF(startWord + JSON.stringify(binding));
+                            connection.sendUTF(startWord + JSON.stringify(bindings));
+                        });
+                        queryExecutor.getData().then((bindings) => {
+                            if (bindings.length > 0) {
+                                for (const binding of bindings) {
+                                    connection.sendUTF("added " + JSON.stringify(binding));
+                                }
                             }
                         });
-                        let bindings = queryExecutor.getData();
-                        if (bindings.length > 0) {
-                            for (const binding of bindings) {
-                                connection.sendUTF("added " + JSON.stringify(binding));
-                            }
-                        }
                     }
                 }
             });

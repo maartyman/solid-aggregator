@@ -1,4 +1,4 @@
-import {QueryExecutor} from "../queryExecutorPackage/queryExecutor/queryExecutor";
+import {QueryExecutor} from "incremunica";
 import {ServerResponse} from "http";
 import {Logger} from "tslog";
 

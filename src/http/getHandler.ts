@@ -1,9 +1,9 @@
 import {IncomingMessage, ServerResponse} from "http";
 import {Logger} from "tslog";
 import {loggerSettings} from "../utils/loggerSettings";
-import {QueryExecutor} from "../queryExecutorPackage/queryExecutor/queryExecutor";
+import {QueryExecutor} from "incremunica";
 import {setHeaders} from "./setHeaders";
-import {resolveUndefined} from "../queryExecutorPackage/utils/resolveUndefined";
+import {resolveUndefined} from "../utils/resolveUndefined";
 
 
 export class GetHandler {
@@ -18,10 +18,10 @@ export class GetHandler {
     const hasNoError = setHeaders(logger, res, queryExecutor);
 
     if (hasNoError) {
-      res.setHeader("Content-Type", "text/text");
+      res.setHeader("Content-Type", "application/json");
 
       // @ts-ignore
-      const returnValue = JSON.stringify(queryExecutor.getData());
+      const returnValue = JSON.stringify(await queryExecutor.getData());
       logger.debug(`result: \n${returnValue}`);
       res.write(returnValue);
 

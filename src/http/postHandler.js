@@ -13,7 +13,7 @@ exports.PostHandler = void 0;
 const getHttpBody_1 = require("../utils/getHttpBody");
 const loggerSettings_1 = require("../utils/loggerSettings");
 const tslog_1 = require("tslog");
-const queryExecutor_1 = require("../queryExecutorPackage/queryExecutor/queryExecutor");
+const incremunica_1 = require("incremunica");
 class PostHandler {
     static handle(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -21,12 +21,12 @@ class PostHandler {
             logger.debug(`POST request received`);
             let queryExplanation = yield (0, getHttpBody_1.getHttpBody)(req);
             logger.debug(`query: \n${JSON.stringify(queryExplanation)}`);
-            let queryExecutor = yield queryExecutor_1.QueryExecutor.factory.getOrCreate(queryExecutor_1.QueryExecutor.factory.queryExplanationToUUID(queryExplanation), queryExecutor_1.QueryExecutor, queryExplanation);
+            let queryExecutor = yield incremunica_1.QueryExecutor.factory.getOrCreate(incremunica_1.QueryExecutor.factory.queryExplanationToUUID(queryExplanation), incremunica_1.QueryExecutor, queryExplanation, true);
             //TODO return HTTP 500 code on failure
             logger.debug(`Writing 200: Ok`);
             res.statusCode = 200;
             res.setHeader("Location", queryExecutor.key.toString());
-            res.write(JSON.stringify(queryExecutor.getData()));
+            res.write(JSON.stringify(yield queryExecutor.getData()));
             res.end();
             /*
             else {

@@ -8,12 +8,13 @@ const commander_1 = require("commander");
 const guardingConfig_1 = require("./utils/guardingConfig");
 const tslog_1 = require("tslog");
 const loggerSettings_1 = require("./utils/loggerSettings");
+const incremunica_1 = require("incremunica");
 class AppRunner {
     static cli() {
         commander_1.program
             .name("query-queryExecutor")
             .description("An intermediate server between the client and a solid pod.")
-            .version("1.0.4");
+            .version(require("../package.json").version);
         commander_1.program.command("serve")
             .description("Start the Solid Aggregator Server.")
             .option("-p, --port <portNumber>", "Defines the port of the server.", "3001")
@@ -26,6 +27,7 @@ class AppRunner {
     }
     static runApp(debug, port, polling) {
         loggerSettings_1.loggerSettings.minLevel = debug;
+        incremunica_1.loggerSettings.minLevel = debug;
         let logger = new tslog_1.Logger(loggerSettings_1.loggerSettings);
         logger.debug(`starting httpServer`);
         httpServer_1.HttpServer.setInstance(port ? port : 3001);

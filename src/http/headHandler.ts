@@ -1,9 +1,9 @@
 import {IncomingMessage, ServerResponse} from "http";
 import {Logger} from "tslog";
 import {loggerSettings} from "../utils/loggerSettings";
-import {QueryExecutor} from "../queryExecutorPackage/queryExecutor/queryExecutor";
+import {QueryExecutor} from "incremunica";
 import {setHeaders} from "./setHeaders";
-import {resolveUndefined} from "../queryExecutorPackage/utils/resolveUndefined";
+import {resolveUndefined} from "../utils/resolveUndefined";
 
 
 export class GetHandler {

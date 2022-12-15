@@ -1,19 +1,18 @@
 #!/usr/bin/env node
 import {HttpServer} from "./http/httpServer";
-import {QueryExecutorFactory} from "./queryExecutorPackage/queryExecutor/queryExecutorFactory";
 import {WebSocketHandler} from "./http/webSocketHandler";
 import {program} from "commander";
 import {GuardingConfig} from "./utils/guardingConfig";
 import {Logger, TLogLevelName} from "tslog";
 import {loggerSettings} from "./utils/loggerSettings";
-import {GuardFactory} from "./queryExecutorPackage/guard/guardFactory";
+import {loggerSettings as incremunicaLoggerSettings} from "incremunica";
 
 export class AppRunner {
   static cli() {
     program
       .name("query-queryExecutor")
       .description("An intermediate server between the client and a solid pod.")
-      .version("1.0.4")
+      .version(require("../package.json").version)
 
     program.command("serve")
       .description("Start the Solid Aggregator Server.")
@@ -41,6 +40,7 @@ export class AppRunner {
 
   static runApp(debug: TLogLevelName | undefined, port?: number, polling?: number) {
     loggerSettings.minLevel = debug;
+    incremunicaLoggerSettings.minLevel = debug;
     let logger = new Logger(loggerSettings);
 
     logger.debug(`starting httpServer`);
