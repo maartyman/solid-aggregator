@@ -1,6 +1,6 @@
 {
   "name": "solid-aggregator-server",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "solid-aggregator-server",
   "main": "./src/main.js",
   "types": "./src/main.ts",
@@ -31,10 +31,10 @@
   "dependencies": {
     "@comunica/bindings-factory": "^2.2.0",
     "@comunica/bus-normalize-rule": "^0.2.0",
-    "@comunica/config-query-sparql-link-traversal": "^0.0.2-alpha.5.0",
+    "@comunica/config-query-sparql-link-traversal": "0.0.2-alpha.5.0",
     "@comunica/config-reasoning": "^0.2.0",
-    "@comunica/query-sparql-link-traversal": "^0.0.2-alpha.5.0",
-    "@comunica/query-sparql-link-traversal-solid": "^0.0.2-alpha.6.0",
+    "@comunica/query-sparql-link-traversal": "0.0.2-alpha.5.0",
+    "@comunica/query-sparql-link-traversal-solid": "0.0.2-alpha.6.0",
     "@comunica/query-sparql-reasoning": "^0.2.0",
     "@comunica/query-sparql-solid": "^2.2.0",
     "@comunica/reasoning-context-entries": "^0.2.0",
