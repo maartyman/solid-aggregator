@@ -14,14 +14,31 @@ const getHttpBody_1 = require("../utils/getHttpBody");
 const loggerSettings_1 = require("../utils/loggerSettings");
 const tslog_1 = require("tslog");
 const incremunica_1 = require("incremunica");
+const sh_1 = require("../utils/sh");
 class PostHandler {
     static handle(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let logger = new tslog_1.Logger(loggerSettings_1.loggerSettings);
             logger.debug(`POST request received`);
-            let queryExplanation = yield (0, getHttpBody_1.getHttpBody)(req);
-            logger.debug(`query: \n${JSON.stringify(queryExplanation)}`);
-            let queryExecutor = yield incremunica_1.QueryExecutor.factory.getOrCreate(incremunica_1.QueryExecutor.factory.queryExplanationToUUID(queryExplanation), incremunica_1.QueryExecutor, queryExplanation, true);
+            let body = yield (0, getHttpBody_1.getHttpBody)(req);
+            /*
+            if (body.Rules !== undefined || body.Rules !== "") {
+              //let rules = await (await fetch(body.Rules)).text()
+        
+            }
+             */
+            //const exec = "java -Djava.library.path=/usr/lib/swi-prolog/lib/x86_64-linux/ -jar ~/Documents/doctoraat/code/SRR/target/SRR-1.0-SNAPSHOT-jar-with-dependencies.jar"
+            const exec = "docker run 57b2ad22fdf7";
+            //let { stdout } = await sh(exec + " " + body.queryExplanation.queryString + " ./rules/rules.rml.ttl");
+            //let { stdout } = await sh(exec + " '" + body.queryExplanation.queryString.replace(/(\r\n|\n|\r)/gm, "") + "'");
+            //
+            let { stdout } = yield (0, sh_1.sh)(exec + " '" + body.queryExplanation.queryString + "' ./rules/rules.rml.ttl");
+            if (stdout != "") {
+                logger.debug(`Query changed from:\n${body.queryExplanation.queryString}\nto:\n${stdout}`);
+                body.queryExplanation.queryString = stdout;
+            }
+            logger.debug(`query: \n${JSON.stringify(body.queryExplanation)}`);
+            let queryExecutor = yield incremunica_1.QueryExecutor.factory.getOrCreate(incremunica_1.QueryExecutor.factory.queryExplanationToUUID(body.queryExplanation), incremunica_1.QueryExecutor, body.queryExplanation, true);
             //TODO return HTTP 500 code on failure
             logger.debug(`Writing 200: Ok`);
             res.statusCode = 200;
@@ -45,3 +62,13 @@ class PostHandler {
     }
 }
 exports.PostHandler = PostHandler;
+class MutableQueryExplanation {
+    constructor(queryExplanation) {
+        this.comunicaContext = queryExplanation.comunicaContext;
+        this.comunicaVersion = queryExplanation.comunicaVersion;
+        this.lenient = queryExplanation.lenient;
+        this.queryString = queryExplanation.queryString;
+        this.reasoningRules = queryExplanation.reasoningRules;
+        this.sources = queryExplanation.sources;
+    }
+}

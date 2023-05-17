@@ -9,22 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getHttpBody = void 0;
-const incremunica_1 = require("incremunica");
-function getHttpBody(req) {
+exports.sh = void 0;
+const child_process_1 = require("child_process");
+function sh(cmd) {
     return __awaiter(this, void 0, void 0, function* () {
-        let body = "";
-        req.on('data', (chunk) => {
-            body += chunk;
-        });
-        yield new Promise((resolve, reject) => {
-            req.on("end", () => {
-                resolve();
+        return new Promise(function (resolve, reject) {
+            (0, child_process_1.exec)(cmd, (err, stdout, stderr) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve({ stdout, stderr });
+                }
             });
         });
-        const json = JSON.parse(body);
-        let queryExplaination = new incremunica_1.QueryExplanation(json.queryString, json.sources, json.comunicaVersion, json.comunicaContext, json.reasoningRules, json.lenient);
-        return { queryExplanation: queryExplaination, Rules: json.rules };
     });
 }
-exports.getHttpBody = getHttpBody;
+exports.sh = sh;

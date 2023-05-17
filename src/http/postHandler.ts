@@ -2,18 +2,43 @@ import {IncomingMessage, ServerResponse} from "http";
 import {getHttpBody} from "../utils/getHttpBody";
 import {loggerSettings} from "../utils/loggerSettings";
 import {Logger} from "tslog";
-import {QueryExecutor} from "incremunica";
+import {QueryExecutor, QueryExplanation} from "incremunica";
+import {sh} from "../utils/sh";
+import { IDataSource } from '@comunica/types';
+import * as fs from "fs";
 
 export class PostHandler {
   public static async handle(req: IncomingMessage, res: ServerResponse) {
     let logger = new Logger(loggerSettings);
     logger.debug(`POST request received`);
-    let queryExplanation = await getHttpBody(req);
-    logger.debug(`query: \n${JSON.stringify(queryExplanation)}`);
+    let body = await getHttpBody(req);
+
+    if (body.Rules !== undefined || body.Rules !== "") {
+      let rules = await (await fetch(body.Rules)).text();
+      let location = '/rules/' + (new Date()).getMilliseconds() + '.rml.ttl';
+      await new Promise<void>( (resolve, reject) => fs.writeFile(location, rules, err => {
+        if (err) {
+          reject(err);
+        }
+        resolve();
+      }));
+
+      const exec = "java -Djava.library.path=/usr/lib/swi-prolog/lib/x86_64-linux/ -jar /SRR/target/SRR-1.0-SNAPSHOT-jar-with-dependencies.jar"
+      //let { stdout } = await sh(exec + " " + body.queryExplanation.queryString + " ./rules/rules.rml.ttl");
+      //let { stdout } = await sh(exec + " '" + body.queryExplanation.queryString.replace(/(\r\n|\n|\r)/gm, "") + "'");
+
+      let { stdout } = await sh(exec + " '" + body.queryExplanation.queryString + "' " + location);
+      if (stdout != "") {
+        logger.debug(`Query changed from:\n${body.queryExplanation.queryString}\nto:\n${stdout}`);
+        (<MutableQueryExplanation>body.queryExplanation).queryString = stdout;
+      }
+    }
+
+    logger.debug(`query: \n${JSON.stringify(body.queryExplanation)}`);
     let queryExecutor = await QueryExecutor.factory.getOrCreate(
-      QueryExecutor.factory.queryExplanationToUUID(queryExplanation),
+      QueryExecutor.factory.queryExplanationToUUID(body.queryExplanation),
       QueryExecutor,
-      queryExplanation,
+      body.queryExplanation,
       true
     );
     //TODO return HTTP 500 code on failure
@@ -35,5 +60,23 @@ export class PostHandler {
       });
     }
      */
+  }
+}
+
+class MutableQueryExplanation implements QueryExplanation {
+  comunicaContext: string;
+  comunicaVersion: string;
+  lenient: boolean;
+  queryString: string;
+  reasoningRules: string;
+  sources: [IDataSource, ...IDataSource[]];
+
+  constructor(queryExplanation: QueryExplanation) {
+    this.comunicaContext = queryExplanation.comunicaContext
+    this.comunicaVersion = queryExplanation.comunicaVersion
+    this.lenient = queryExplanation.lenient
+    this.queryString = queryExplanation.queryString
+    this.reasoningRules = queryExplanation.reasoningRules
+    this.sources = queryExplanation.sources
   }
 }
