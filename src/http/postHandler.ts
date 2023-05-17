@@ -6,6 +6,7 @@ import {QueryExecutor, QueryExplanation} from "incremunica";
 import {sh} from "../utils/sh";
 import { IDataSource } from '@comunica/types';
 import * as fs from "fs";
+import fetch from "cross-fetch";
 
 export class PostHandler {
   public static async handle(req: IncomingMessage, res: ServerResponse) {
@@ -13,9 +14,11 @@ export class PostHandler {
     logger.debug(`POST request received`);
     let body = await getHttpBody(req);
 
-    if (body.Rules !== undefined || body.Rules !== "") {
-      let rules = await (await fetch(body.Rules)).text();
-      let location = '/rules/' + (new Date()).getMilliseconds() + '.rml.ttl';
+    logger.debug(JSON.stringify(body), "rules:", body.rules)
+
+    if (body.rules !== undefined && body.rules !== "") {
+      let rules = await (await fetch(body.rules)).text();
+      let location = '/rules/' + (new Date()).valueOf() + '.rml.ttl';
       await new Promise<void>( (resolve, reject) => fs.writeFile(location, rules, err => {
         if (err) {
           reject(err);

@@ -1,7 +1,7 @@
 import {IncomingMessage} from "http";
 import {QueryExplanation} from "incremunica";
 
-export async function getHttpBody(req: IncomingMessage) : Promise<{queryExplanation: QueryExplanation, Rules: string}> {
+export async function getHttpBody(req: IncomingMessage) : Promise<{queryExplanation: QueryExplanation, rules: string}> {
   let body = "";
   req.on('data', (chunk) => {
     body += chunk;
@@ -24,5 +24,5 @@ export async function getHttpBody(req: IncomingMessage) : Promise<{queryExplanat
     json.lenient
   );
 
-  return {queryExplanation: queryExplaination, Rules: json.rules}
+  return {queryExplanation: queryExplaination, rules: json.rules}
 }

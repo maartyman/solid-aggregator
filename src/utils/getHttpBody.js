@@ -24,7 +24,7 @@ function getHttpBody(req) {
         });
         const json = JSON.parse(body);
         let queryExplaination = new incremunica_1.QueryExplanation(json.queryString, json.sources, json.comunicaVersion, json.comunicaContext, json.reasoningRules, json.lenient);
-        return { queryExplanation: queryExplaination, Rules: json.rules };
+        return { queryExplanation: queryExplaination, rules: json.rules };
     });
 }
 exports.getHttpBody = getHttpBody;
