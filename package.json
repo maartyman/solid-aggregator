@@ -42,7 +42,7 @@
     "@types/websocket": "^1.0.5",
     "commander": "^9.4.0",
     "events": "^3.3.0",
-    "incremunica": "^1.0.0",
+    "incremunica": "file:../incremunica/",
     "n3": "^1.16.2",
     "tslog": "^3.3.4",
     "uuid": "^8.3.2",

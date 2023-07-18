@@ -1,7 +1,5 @@
 # Solid Aggregator Server
 
-### This package is currently under active development. Proper functionality is not guaranteed.
-
 To install the server globally run this command:
 ```
 npm install -g solid-aggregator-server

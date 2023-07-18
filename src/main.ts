@@ -5,7 +5,9 @@ import {program} from "commander";
 import {GuardingConfig} from "./utils/guardingConfig";
 import {Logger, TLogLevelName} from "tslog";
 import {loggerSettings} from "./utils/loggerSettings";
-import {loggerSettings as incremunicaLoggerSettings} from "incremunica";
+import {loggerSettings as incremunicaLoggerSettings, QueryExecutor, QueryExplanation} from "incremunica";
+import {TComunicaVersion} from "incremunica/src/queryExecutor/queryExplanation";
+import {query1, query2} from "./utils/preloadedQueries";
 
 export class AppRunner {
   static cli() {
@@ -42,6 +44,34 @@ export class AppRunner {
     loggerSettings.minLevel = debug;
     incremunicaLoggerSettings.minLevel = debug;
     let logger = new Logger(loggerSettings);
+
+    QueryExecutor.factory.getOrCreate(
+      "0",
+      QueryExecutor,
+      new QueryExplanation(
+        query1,
+        [
+          "https://server.solid-sandbox.vito.be/alice/health/regional_research_survey",
+          "https://server.solid-sandbox.vito.be/alice/profile/card",
+          "https://server.solid-sandbox.vito.be/alice/health/hospital-report"
+        ],
+      ),
+      true
+    )
+
+    QueryExecutor.factory.getOrCreate(
+      "1",
+      QueryExecutor,
+      new QueryExplanation(
+        query2,
+        [
+          "https://server.solid-sandbox.vito.be/alice/health/regional_research_survey",
+          "https://server.solid-sandbox.vito.be/alice/profile/card",
+          "https://server.solid-sandbox.vito.be/alice/health/hospital-report"
+        ],
+      ),
+      true
+    )
 
     logger.debug(`starting httpServer`);
     HttpServer.setInstance(port? port : 3001);

@@ -31,9 +31,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostHandler = void 0;
 const getHttpBody_1 = require("../utils/getHttpBody");
@@ -42,40 +39,66 @@ const tslog_1 = require("tslog");
 const incremunica_1 = require("incremunica");
 const sh_1 = require("../utils/sh");
 const fs = __importStar(require("fs"));
-const cross_fetch_1 = __importDefault(require("cross-fetch"));
 class PostHandler {
     static handle(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let logger = new tslog_1.Logger(loggerSettings_1.loggerSettings);
             logger.debug(`POST request received`);
-            let body = yield (0, getHttpBody_1.getHttpBody)(req);
-            logger.debug(JSON.stringify(body), "rules:", body.rules);
-            if (body.rules !== undefined && body.rules !== "") {
-                let rules = yield (yield (0, cross_fetch_1.default)(body.rules)).text();
-                let location = '/rules/' + (new Date()).valueOf() + '.rml.ttl';
-                yield new Promise((resolve, reject) => fs.writeFile(location, rules, err => {
-                    if (err) {
-                        reject(err);
+            let fileName = (new Date()).valueOf() + '.rml.ttl';
+            let location = '/rules/' + fileName;
+            //let location = '/home/maarten/Documents/doctoraat/code/solid-agent/rules/' + fileName;
+            //let ruleFileNames = '"/rules/ggdm-identity.rml.ttl" "/rules/ggdm-privacy.rml.ttl"';
+            let ruleFileNames = ""; //'"/rules/ggdm-identity.rml.ttl" "/rules/ggdm-privacy.rml.ttl" "/rules/fhir-to-ggdm.rml.ttl"';
+            let fileCreated = false;
+            try {
+                let body = yield (0, getHttpBody_1.getHttpBody)(req);
+                logger.debug(JSON.stringify(body));
+                let query = body.queryExplanation.queryString;
+                //let location = '/rules/' + fileName;
+                if (body.rules && body.rules !== "") {
+                    logger.debug("saving rules", body.rules);
+                    yield new Promise((resolve, reject) => fs.writeFile(location, body.rules, err => {
+                        if (err) {
+                            logger.debug("error saving rules");
+                            fs.unlinkSync(location);
+                            reject(err);
+                        }
+                        fileCreated = true;
+                        ruleFileNames += ' "' + location + '"';
+                        resolve();
+                    }));
+                    const exec = "java -Djava.library.path=/usr/lib/swi-prolog/lib/x86_64-linux/ -jar /SRR/target/SRR-1.1-SNAPSHOT-jar-with-dependencies.jar";
+                    //const exec = "docker run srr";
+                    //let { stdout } = await sh(exec + " " + body.queryExplanation.queryString + " ./rules/rules.rml.ttl");
+                    //let { stdout } = await sh(exec + " '" + body.queryExplanation.queryString.replace(/(\r\n|\n|\r)/gm, "") + "'");
+                    logger.debug("exec: " + exec + " '" + body.queryExplanation.queryString + "' " + ruleFileNames);
+                    let { stdout } = yield (0, sh_1.sh)(exec + " '" + body.queryExplanation.queryString + "' " + ruleFileNames);
+                    logger.debug("output: " + stdout);
+                    if (stdout !== "") {
+                        query = stdout.replace(new RegExp("bnode(".replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), "BNODE(");
+                        logger.debug(`Query changed from:\n${body.queryExplanation.queryString}\nto:\n${query}`);
                     }
-                    resolve();
-                }));
-                const exec = "java -Djava.library.path=/usr/lib/swi-prolog/lib/x86_64-linux/ -jar /SRR/target/SRR-1.0-SNAPSHOT-jar-with-dependencies.jar";
-                //let { stdout } = await sh(exec + " " + body.queryExplanation.queryString + " ./rules/rules.rml.ttl");
-                //let { stdout } = await sh(exec + " '" + body.queryExplanation.queryString.replace(/(\r\n|\n|\r)/gm, "") + "'");
-                let { stdout } = yield (0, sh_1.sh)(exec + " '" + body.queryExplanation.queryString + "' " + location);
-                if (stdout != "") {
-                    logger.debug(`Query changed from:\n${body.queryExplanation.queryString}\nto:\n${stdout}`);
-                    body.queryExplanation.queryString = stdout;
                 }
+                let queryExplanation = new incremunica_1.QueryExplanation(query, body.queryExplanation.sources, "default", "default", "", true);
+                logger.debug(`query: \n${JSON.stringify(queryExplanation)}`);
+                let queryExecutor = yield incremunica_1.QueryExecutor.factory.getOrCreate(incremunica_1.QueryExecutor.factory.queryExplanationToUUID(queryExplanation), incremunica_1.QueryExecutor, queryExplanation, false);
+                queryExecutor.delete();
+                logger.debug(`Writing 200: Ok`);
+                res.statusCode = 200;
+                res.setHeader("Content-Type", "application/json");
+                res.write(JSON.stringify({ bindings: yield queryExecutor.getData(), query: query }));
+                res.end();
+                queryExecutor.delete();
             }
-            logger.debug(`query: \n${JSON.stringify(body.queryExplanation)}`);
-            let queryExecutor = yield incremunica_1.QueryExecutor.factory.getOrCreate(incremunica_1.QueryExecutor.factory.queryExplanationToUUID(body.queryExplanation), incremunica_1.QueryExecutor, body.queryExplanation, true);
-            //TODO return HTTP 500 code on failure
-            logger.debug(`Writing 200: Ok`);
-            res.statusCode = 200;
-            res.setHeader("Location", queryExecutor.key.toString());
-            res.write(JSON.stringify(yield queryExecutor.getData()));
-            res.end();
+            catch (e) {
+                logger.debug(`Writing 500: ` + e);
+                res.statusCode = 500;
+                res.write(JSON.stringify({ error: e }));
+                res.end();
+            }
+            if (fileCreated) {
+                fs.unlinkSync(location);
+            }
             /*
             else {
               queryExecutor.on("queryEngineEvent", (value) => {

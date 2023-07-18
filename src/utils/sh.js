@@ -16,7 +16,7 @@ function sh(cmd) {
         return new Promise(function (resolve, reject) {
             (0, child_process_1.exec)(cmd, (err, stdout, stderr) => {
                 if (err) {
-                    reject(err);
+                    reject(stderr);
                 }
                 else {
                     resolve({ stdout, stderr });

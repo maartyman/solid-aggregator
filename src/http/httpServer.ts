@@ -31,6 +31,7 @@ export class HttpServer extends events.EventEmitter {
 
   private requestHandler(req: IncomingMessage, res: ServerResponse) {
     let requestHandlerLogger = new Logger(loggerSettings);
+    res.setHeader("Access-Control-Allow-Origin", "*");
     switch (req.method) {
       case "GET":
         GetHandler.handle(req, res);
@@ -38,8 +39,14 @@ export class HttpServer extends events.EventEmitter {
       case "POST":
         PostHandler.handle(req, res);
         break;
+      case "OPTIONS":
+        res.statusCode = 200;
+        res.end();
+        break;
       default:
         requestHandlerLogger.error(`request method not known! method: [ ${ req.method } ]`);
+        res.statusCode = 500;
+        res.end();
         break;
     }
   }

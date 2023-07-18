@@ -9,6 +9,7 @@ const guardingConfig_1 = require("./utils/guardingConfig");
 const tslog_1 = require("tslog");
 const loggerSettings_1 = require("./utils/loggerSettings");
 const incremunica_1 = require("incremunica");
+const preloadedQueries_1 = require("./utils/preloadedQueries");
 class AppRunner {
     static cli() {
         commander_1.program
@@ -29,6 +30,16 @@ class AppRunner {
         loggerSettings_1.loggerSettings.minLevel = debug;
         incremunica_1.loggerSettings.minLevel = debug;
         let logger = new tslog_1.Logger(loggerSettings_1.loggerSettings);
+        incremunica_1.QueryExecutor.factory.getOrCreate("0", incremunica_1.QueryExecutor, new incremunica_1.QueryExplanation(preloadedQueries_1.query1, [
+            "https://server.solid-sandbox.vito.be/alice/health/regional_research_survey",
+            "https://server.solid-sandbox.vito.be/alice/profile/card",
+            "https://server.solid-sandbox.vito.be/alice/health/hospital-report"
+        ]), true);
+        incremunica_1.QueryExecutor.factory.getOrCreate("1", incremunica_1.QueryExecutor, new incremunica_1.QueryExplanation(preloadedQueries_1.query2, [
+            "https://server.solid-sandbox.vito.be/alice/health/regional_research_survey",
+            "https://server.solid-sandbox.vito.be/alice/profile/card",
+            "https://server.solid-sandbox.vito.be/alice/health/hospital-report"
+        ]), true);
         logger.debug(`starting httpServer`);
         httpServer_1.HttpServer.setInstance(port ? port : 3001);
         logger.debug(`setting up the data guarding`);

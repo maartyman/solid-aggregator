@@ -4,7 +4,7 @@ export async function sh(cmd: string): Promise<{ stdout: string, stderr: string 
   return new Promise<{stdout: string, stderr: string}>(function (resolve, reject) {
     exec(cmd, (err, stdout, stderr) => {
       if (err) {
-        reject(err);
+        reject(stderr);
       } else {
         resolve({ stdout, stderr });
       }
