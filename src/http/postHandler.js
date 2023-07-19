@@ -79,10 +79,24 @@ class PostHandler {
                         logger.debug(`Query changed from:\n${body.queryExplanation.queryString}\nto:\n${query}`);
                     }
                 }
+                else {
+                    logger.debug(`Writing 200: Ok`);
+                    res.statusCode = 200;
+                    res.setHeader("Content-Type", "application/json");
+                    res.write(JSON.stringify({ bindings: [], query: "SELECT  *\n" +
+                            "WHERE\n" +
+                            "  { {  }\n" +
+                            "    FILTER ( false )\n" +
+                            "  }" }));
+                    res.end();
+                    if (fileCreated) {
+                        fs.unlinkSync(location);
+                    }
+                    return;
+                }
                 let queryExplanation = new incremunica_1.QueryExplanation(query, body.queryExplanation.sources, "default", "default", "", true);
                 logger.debug(`query: \n${JSON.stringify(queryExplanation)}`);
                 let queryExecutor = yield incremunica_1.QueryExecutor.factory.getOrCreate(incremunica_1.QueryExecutor.factory.queryExplanationToUUID(queryExplanation), incremunica_1.QueryExecutor, queryExplanation, false);
-                queryExecutor.delete();
                 logger.debug(`Writing 200: Ok`);
                 res.statusCode = 200;
                 res.setHeader("Content-Type", "application/json");

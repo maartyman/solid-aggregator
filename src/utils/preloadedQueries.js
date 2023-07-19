@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.query2 = exports.query1 = void 0;
 exports.query1 = `SELECT  ?age ?fruits ?exercise
 WHERE
-  {   { { { { { { SELECT  (if(bound(?fhirConditionOnsetDateTimeValue), <https://vito.be/schema/ggdm#yes>, <https://vito.be/schema/ggdm#no>) AS ?rvar382181) (if(bound(?fhirConditionOnsetDateTimeValue), ?fhirConditionOnsetDateTimeValue, concat(str(day(now())), "-", str(month(now())), "-", str(year(now())))) AS ?rvar382180)
+  {   { { { { { { SELECT  (if(bound(?fhirConditionOnsetDateTimeValue), <https://vito.be/schema/ggdm#yes>, <https://vito.be/schema/ggdm#no>) AS ?rvar83997) (if(bound(?fhirConditionOnsetDateTimeValue), ?fhirConditionOnsetDateTimeValue, concat(str(day(now())), "-", str(month(now())), "-", str(year(now())))) AS ?rvar83996)
                   WHERE
                     { OPTIONAL
                         { ?c    a                     <http://hl7.org/fhir/Condition> ;
@@ -23,7 +23,7 @@ WHERE
                         }
                     }
                 }
-                { SELECT  (if(bound(?fhirConditionOnsetDateTimeValue), <https://vito.be/schema/ggdm#yes>, <https://vito.be/schema/ggdm#no>) AS ?rvar382177) (if(bound(?fhirConditionOnsetDateTimeValue), ?fhirConditionOnsetDateTimeValue, concat(str(day(now())), "-", str(month(now())), "-", str(year(now())))) AS ?rvar382176)
+                { SELECT  (if(bound(?fhirConditionOnsetDateTimeValue), <https://vito.be/schema/ggdm#yes>, <https://vito.be/schema/ggdm#no>) AS ?rvar83999) (if(bound(?fhirConditionOnsetDateTimeValue), ?fhirConditionOnsetDateTimeValue, concat(str(day(now())), "-", str(month(now())), "-", str(year(now())))) AS ?rvar83998)
                   WHERE
                     { OPTIONAL
                         { ?c     a                     <http://hl7.org/fhir/Condition> ;
@@ -44,7 +44,7 @@ WHERE
                     }
                 }
               }
-              { SELECT  (if(bound(?fhirConditionOnsetDateTimeValue), <https://vito.be/schema/ggdm#yes>, <https://vito.be/schema/ggdm#no>) AS ?rvar382179) (if(bound(?fhirConditionOnsetDateTimeValue), ?fhirConditionOnsetDateTimeValue, concat(str(day(now())), "-", str(month(now())), "-", str(year(now())))) AS ?rvar382178)
+              { SELECT  (if(bound(?fhirConditionOnsetDateTimeValue), <https://vito.be/schema/ggdm#yes>, <https://vito.be/schema/ggdm#no>) AS ?rvar84001) (if(bound(?fhirConditionOnsetDateTimeValue), ?fhirConditionOnsetDateTimeValue, concat(str(day(now())), "-", str(month(now())), "-", str(year(now())))) AS ?rvar84000)
                 WHERE
                   { OPTIONAL
                       { ?c     a                     <http://hl7.org/fhir/Condition> ;
@@ -65,7 +65,7 @@ WHERE
                   }
               }
             }
-            { SELECT  (if(bound(?fhirConditionOnsetDateTimeValue), <https://vito.be/schema/ggdm#yes>, <https://vito.be/schema/ggdm#no>) AS ?rvar382183) (if(bound(?fhirConditionOnsetDateTimeValue), ?fhirConditionOnsetDateTimeValue, concat(str(day(now())), "-", str(month(now())), "-", str(year(now())))) AS ?rvar382182)
+            { SELECT  (if(bound(?fhirConditionOnsetDateTimeValue), <https://vito.be/schema/ggdm#yes>, <https://vito.be/schema/ggdm#no>) AS ?rvar83995) (if(bound(?fhirConditionOnsetDateTimeValue), ?fhirConditionOnsetDateTimeValue, concat(str(day(now())), "-", str(month(now())), "-", str(year(now())))) AS ?rvar83994)
               WHERE
                 { OPTIONAL
                     { ?c     a                     <http://hl7.org/fhir/Condition> ;
@@ -86,146 +86,142 @@ WHERE
                 }
             }
           }
-          FILTER ( BNODE(concat("session_on_", str(?rvar382180))) = BNODE(concat("session_on_", str(?rvar382176))) )
-          FILTER ( ?rvar382179 = <https://vito.be/schema/ggdm#yes> )
-          FILTER ( BNODE(concat("completed_question_2_on_", str(?rvar382182))) = BNODE(concat("completed_question_2_on_", str(?rvar382178))) )
-          FILTER ( BNODE(concat("completed_question_2_on_", str(?rvar382180))) = BNODE(concat("completed_question_2_on_", str(?rvar382182))) )
+          FILTER ( BNODE(concat("completed_question_2_on_", str(?rvar84000))) = BNODE(concat("completed_question_2_on_", str(?rvar83998))) )
+          FILTER ( BNODE(concat("completed_question_2_on_", str(?rvar83996))) = BNODE(concat("completed_question_2_on_", str(?rvar84000))) )
+          FILTER ( BNODE(concat("session_on_", str(?rvar83998))) = BNODE(concat("session_on_", str(?rvar83994))) )
+          FILTER ( ?rvar83997 = <https://vito.be/schema/ggdm#yes> )
         }
-        BIND(BNODE(concat("session_on_", str(?rvar382180))) AS ?_s)
-        BIND(BNODE(concat("completed_question_2_on_", str(?rvar382180))) AS ?completedQ2)
+        BIND(BNODE(concat("completed_question_2_on_", str(?rvar83996))) AS ?completedQ2)
+        BIND(BNODE(concat("session_on_", str(?rvar83998))) AS ?_s)
         BIND(<https://server.solid-sandbox.vito.be/alice/profile/card#me> AS ?person)
       }
     UNION
-      { { { { { { SELECT  ?rvar20386 ?rvar20382 ?rvar20387 ?rvar20385 ?rvar20383 ?rvar20384
+      { { { { { { SELECT  ?rvar222208 ?rvar222204 ?rvar222209 ?rvar222207 ?rvar222205 ?rvar222206
                   WHERE
-                    { ?rvar20384  <http://www.w3.org/ns/prov#atTime>  ?rvar20385 ;
-                                <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar20383 .
-                      ?rvar20382  <https://w3id.org/survey-ontology#answeredIn>  ?rvar20384 ;
-                                <https://w3id.org/survey-ontology#hasAnswer>  ?rvar20387 ;
-                                <https://w3id.org/survey-ontology#completesQuestion>  ?rvar20386
-                      FILTER ( ?rvar20386 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
+                    { ?rvar222206  <http://www.w3.org/ns/prov#atTime>  ?rvar222207 ;
+                                <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar222205 .
+                      ?rvar222204  <https://w3id.org/survey-ontology#answeredIn>  ?rvar222206 ;
+                                <https://w3id.org/survey-ontology#hasAnswer>  ?rvar222209 ;
+                                <https://w3id.org/survey-ontology#completesQuestion>  ?rvar222208
+                      FILTER ( ?rvar222208 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
                     }
                 }
-                { SELECT  ?rvar20404 ?rvar20400 ?rvar20405 ?rvar20403 ?rvar20401 ?rvar20402
+                { SELECT  ?rvar222220 ?rvar222216 ?rvar222221 ?rvar222219 ?rvar222217 ?rvar222218
                   WHERE
-                    { ?rvar20402  <http://www.w3.org/ns/prov#atTime>  ?rvar20403 ;
-                                <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar20401 .
-                      ?rvar20400  <https://w3id.org/survey-ontology#answeredIn>  ?rvar20402 ;
-                                <https://w3id.org/survey-ontology#hasAnswer>  ?rvar20405 ;
-                                <https://w3id.org/survey-ontology#completesQuestion>  ?rvar20404
-                      FILTER ( ?rvar20404 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
+                    { ?rvar222218  <http://www.w3.org/ns/prov#atTime>  ?rvar222219 ;
+                                <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar222217 .
+                      ?rvar222216  <https://w3id.org/survey-ontology#answeredIn>  ?rvar222218 ;
+                                <https://w3id.org/survey-ontology#hasAnswer>  ?rvar222221 ;
+                                <https://w3id.org/survey-ontology#completesQuestion>  ?rvar222220
+                      FILTER ( ?rvar222220 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
                     }
                 }
               }
-              { SELECT  ?rvar20392 ?rvar20388 ?rvar20393 ?rvar20391 ?rvar20389 ?rvar20390
+              { SELECT  ?rvar222202 ?rvar222198 ?rvar222203 ?rvar222201 ?rvar222199 ?rvar222200
                 WHERE
-                  { ?rvar20390  <http://www.w3.org/ns/prov#atTime>  ?rvar20391 ;
-                              <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar20389 .
-                    ?rvar20388  <https://w3id.org/survey-ontology#answeredIn>  ?rvar20390 ;
-                              <https://w3id.org/survey-ontology#hasAnswer>  ?rvar20393 ;
-                              <https://w3id.org/survey-ontology#completesQuestion>  ?rvar20392
-                    FILTER ( ?rvar20392 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
+                  { ?rvar222200  <http://www.w3.org/ns/prov#atTime>  ?rvar222201 ;
+                              <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar222199 .
+                    ?rvar222198  <https://w3id.org/survey-ontology#answeredIn>  ?rvar222200 ;
+                              <https://w3id.org/survey-ontology#hasAnswer>  ?rvar222203 ;
+                              <https://w3id.org/survey-ontology#completesQuestion>  ?rvar222202
+                    FILTER ( ?rvar222202 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
                   }
               }
             }
-            { SELECT  ?rvar20398 ?rvar20394 ?rvar20399 ?rvar20397 ?rvar20395 ?rvar20396
+            { SELECT  ?rvar222214 ?rvar222210 ?rvar222215 ?rvar222213 ?rvar222211 ?rvar222212
               WHERE
-                { ?rvar20396  <http://www.w3.org/ns/prov#atTime>  ?rvar20397 ;
-                            <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar20395 .
-                  ?rvar20394  <https://w3id.org/survey-ontology#answeredIn>  ?rvar20396 ;
-                            <https://w3id.org/survey-ontology#hasAnswer>  ?rvar20399 ;
-                            <https://w3id.org/survey-ontology#completesQuestion>  ?rvar20398
-                  FILTER ( ?rvar20398 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
+                { ?rvar222212  <http://www.w3.org/ns/prov#atTime>  ?rvar222213 ;
+                            <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar222211 .
+                  ?rvar222210  <https://w3id.org/survey-ontology#answeredIn>  ?rvar222212 ;
+                            <https://w3id.org/survey-ontology#hasAnswer>  ?rvar222215 ;
+                            <https://w3id.org/survey-ontology#completesQuestion>  ?rvar222214
+                  FILTER ( ?rvar222214 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
                 }
             }
           }
-          FILTER ( ?rvar20388 = ?rvar20400 )
-          FILTER ( ?rvar20384 = ?rvar20396 )
-          FILTER ( ?rvar20404 = <https://vito.be/schema/ggdm#question2> )
-          FILTER ( ?rvar20393 = <https://vito.be/schema/ggdm#yes> )
-          FILTER ( ?rvar20400 = ?rvar20394 )
+          FILTER ( ?rvar222220 = <https://vito.be/schema/ggdm#question2> )
+          FILTER ( ?rvar222212 = ?rvar222200 )
+          FILTER ( ?rvar222216 = ?rvar222204 )
+          FILTER ( ?rvar222209 = <https://vito.be/schema/ggdm#yes> )
+          FILTER ( ?rvar222210 = ?rvar222216 )
         }
-        BIND(?rvar20388 AS ?completedQ2)
-        BIND(?rvar20383 AS ?person)
-        BIND(?rvar20384 AS ?_s)
+        BIND(?rvar222212 AS ?_s)
+        BIND(?rvar222210 AS ?completedQ2)
+        BIND(<https://server.solid-sandbox.vito.be/alice/profile/card#me> AS ?person)
       }
     OPTIONAL
-      { { { { SELECT  ?rvar1155966 ?rvar1155962 ?rvar1155967 ?rvar1155965 ?rvar1155963 ?rvar1155964
+      { { { { SELECT  ?rvar234208 ?rvar234204 ?rvar234209 ?rvar234207 ?rvar234205 ?rvar234206
               WHERE
-                { ?rvar1155964  <http://www.w3.org/ns/prov#atTime>  ?rvar1155965 ;
-                            <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar1155963 .
-                  ?rvar1155962  <https://w3id.org/survey-ontology#answeredIn>  ?rvar1155964 ;
-                            <https://w3id.org/survey-ontology#hasAnswer>  ?rvar1155967 ;
-                            <https://w3id.org/survey-ontology#completesQuestion>  ?rvar1155966
-                  FILTER ( ?rvar1155966 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
+                { ?rvar234206  <http://www.w3.org/ns/prov#atTime>  ?rvar234207 ;
+                            <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar234205 .
+                  ?rvar234204  <https://w3id.org/survey-ontology#answeredIn>  ?rvar234206 ;
+                            <https://w3id.org/survey-ontology#hasAnswer>  ?rvar234209 ;
+                            <https://w3id.org/survey-ontology#completesQuestion>  ?rvar234208
+                  FILTER ( ?rvar234208 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
                 }
             }
-            { SELECT  ?rvar1155960 ?rvar1155956 ?rvar1155961 ?rvar1155959 ?rvar1155957 ?rvar1155958
+            { SELECT  ?rvar234214 ?rvar234210 ?rvar234215 ?rvar234213 ?rvar234211 ?rvar234212
               WHERE
-                { ?rvar1155958  <http://www.w3.org/ns/prov#atTime>  ?rvar1155959 ;
-                            <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar1155957 .
-                  ?rvar1155956  <https://w3id.org/survey-ontology#answeredIn>  ?rvar1155958 ;
-                            <https://w3id.org/survey-ontology#hasAnswer>  ?rvar1155961 ;
-                            <https://w3id.org/survey-ontology#completesQuestion>  ?rvar1155960
-                  FILTER ( ?rvar1155960 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
+                { ?rvar234212  <http://www.w3.org/ns/prov#atTime>  ?rvar234213 ;
+                            <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar234211 .
+                  ?rvar234210  <https://w3id.org/survey-ontology#answeredIn>  ?rvar234212 ;
+                            <https://w3id.org/survey-ontology#hasAnswer>  ?rvar234215 ;
+                            <https://w3id.org/survey-ontology#completesQuestion>  ?rvar234214
+                  FILTER ( ?rvar234214 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
                 }
             }
           }
-          FILTER ( ?rvar1155966 = <https://vito.be/schema/ggdm#question9-1> )
-          FILTER ( ?rvar1155962 = ?rvar1155956 )
+          FILTER ( ?rvar234214 = <https://vito.be/schema/ggdm#question9-1> )
+          FILTER ( ?rvar234210 = ?rvar234204 )
         }
-        BIND(?rvar1155962 AS ?completedQ9_1)
-        BIND(?rvar1155961 AS ?fruits)
+        BIND(?rvar234209 AS ?fruits)
+        BIND(?rvar234210 AS ?completedQ9_1)
       }
     OPTIONAL
-      { { { { SELECT  ?rvar1158826 ?rvar1158822 ?rvar1158827 ?rvar1158825 ?rvar1158823 ?rvar1158824
+      { { { { SELECT  ?rvar235228 ?rvar235224 ?rvar235229 ?rvar235227 ?rvar235225 ?rvar235226
               WHERE
-                { ?rvar1158824  <http://www.w3.org/ns/prov#atTime>  ?rvar1158825 ;
-                            <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar1158823 .
-                  ?rvar1158822  <https://w3id.org/survey-ontology#answeredIn>  ?rvar1158824 ;
-                            <https://w3id.org/survey-ontology#hasAnswer>  ?rvar1158827 ;
-                            <https://w3id.org/survey-ontology#completesQuestion>  ?rvar1158826
-                  FILTER ( ?rvar1158826 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
+                { ?rvar235226  <http://www.w3.org/ns/prov#atTime>  ?rvar235227 ;
+                            <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar235225 .
+                  ?rvar235224  <https://w3id.org/survey-ontology#answeredIn>  ?rvar235226 ;
+                            <https://w3id.org/survey-ontology#hasAnswer>  ?rvar235229 ;
+                            <https://w3id.org/survey-ontology#completesQuestion>  ?rvar235228
+                  FILTER ( ?rvar235228 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
                 }
             }
-            { SELECT  ?rvar1158820 ?rvar1158816 ?rvar1158821 ?rvar1158819 ?rvar1158817 ?rvar1158818
+            { SELECT  ?rvar235234 ?rvar235230 ?rvar235235 ?rvar235233 ?rvar235231 ?rvar235232
               WHERE
-                { ?rvar1158818  <http://www.w3.org/ns/prov#atTime>  ?rvar1158819 ;
-                            <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar1158817 .
-                  ?rvar1158816  <https://w3id.org/survey-ontology#answeredIn>  ?rvar1158818 ;
-                            <https://w3id.org/survey-ontology#hasAnswer>  ?rvar1158821 ;
-                            <https://w3id.org/survey-ontology#completesQuestion>  ?rvar1158820
-                  FILTER ( ?rvar1158820 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
+                { ?rvar235232  <http://www.w3.org/ns/prov#atTime>  ?rvar235233 ;
+                            <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar235231 .
+                  ?rvar235230  <https://w3id.org/survey-ontology#answeredIn>  ?rvar235232 ;
+                            <https://w3id.org/survey-ontology#hasAnswer>  ?rvar235235 ;
+                            <https://w3id.org/survey-ontology#completesQuestion>  ?rvar235234
+                  FILTER ( ?rvar235234 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
                 }
             }
           }
-          FILTER ( ?rvar1158826 = <https://vito.be/schema/ggdm#question10> )
-          FILTER ( ?rvar1158822 = ?rvar1158816 )
+          FILTER ( ?rvar235234 = <https://vito.be/schema/ggdm#question10> )
+          FILTER ( ?rvar235230 = ?rvar235224 )
         }
-        BIND(?rvar1158821 AS ?exercise)
-        BIND(?rvar1158822 AS ?completedQ10)
+        BIND(?rvar235229 AS ?exercise)
+        BIND(?rvar235230 AS ?completedQ10)
       }
     OPTIONAL
-      { { SELECT  ?rvar1161239 ?rvar1161240 ?rvar1161242 ?rvar1161243 ?rvar1161236 ?rvar1161237 ?rvar1161241 ?rvar1161238 ?rvar1161244
+      { { SELECT  ?rvar235632 ?rvar235633 ?rvar235634 ?rvar235635
           WHERE
-            { ?rvar1161239  <http://xmlns.com/foaf/0.1/givenName>  ?rvar1161240 ;
-                        <http://xmlns.com/foaf/0.1/familyName>  ?rvar1161242 ;
-                        <http://xmlns.com/foaf/0.1/age>  ?rvar1161243 ;
-                        <http://xmlns.com/foaf/0.1/gender>  ?gender ;
-                        <https://vito.be/schema/ggdm#parameterCholesterolHDL>  ?rvar1161236 ;
-                        <https://vito.be/schema/ggdm#parameterCholesterolRatio>  ?rvar1161237 ;
-                        <https://vito.be/schema/ggdm#parameterCholesterolTotal>  ?rvar1161241 ;
-                        <https://vito.be/schema/ggdm#parameterLength>  ?rvar1161238 ;
-                        <https://vito.be/schema/ggdm#parameterWeight>  ?rvar1161244
+            { ?rvar235632  <http://xmlns.com/foaf/0.1/givenName>  ?rvar235633 ;
+                        <http://xmlns.com/foaf/0.1/familyName>  ?rvar235634 ;
+                        <http://xmlns.com/foaf/0.1/age>  ?rvar235635 ;
+                        <http://xmlns.com/foaf/0.1/gender>  ?gender
             }
         }
-        BIND(?rvar1161239 AS ?person)
-        BIND(?rvar1161243 AS ?age)
+        BIND(?rvar235632 AS ?person)
+        BIND(?rvar235635 AS ?age)
       }
-  }`;
+  }
+`;
 exports.query2 = `SELECT  (COUNT(DISTINCT ?completedQuestion) AS ?count)
 WHERE
-  {   { { SELECT  (if(bound(?fhirConditionOnsetDateTimeValue), <https://vito.be/schema/ggdm#yes>, <https://vito.be/schema/ggdm#no>) AS ?rvar33) (if(bound(?fhirConditionOnsetDateTimeValue), ?fhirConditionOnsetDateTimeValue, concat(str(day(now())), "-", str(month(now())), "-", str(year(now())))) AS ?rvar32)
+  {   { { SELECT  (if(bound(?fhirConditionOnsetDateTimeValue), <https://vito.be/schema/ggdm#yes>, <https://vito.be/schema/ggdm#no>) AS ?rvar27) (if(bound(?fhirConditionOnsetDateTimeValue), ?fhirConditionOnsetDateTimeValue, concat(str(day(now())), "-", str(month(now())), "-", str(year(now())))) AS ?rvar26)
           WHERE
             { OPTIONAL
                 { ?c    a                     <http://hl7.org/fhir/Condition> ;
@@ -245,21 +241,21 @@ WHERE
                 }
             }
         }
-        BIND(BNODE(concat("completed_question_2_on_", str(?rvar32))) AS ?completedQuestion)
-        BIND(BNODE(concat("session_on_", str(?rvar32))) AS ?session)
+        BIND(BNODE(concat("session_on_", str(?rvar26))) AS ?session)
+        BIND(BNODE(concat("completed_question_2_on_", str(?rvar26))) AS ?completedQuestion)
       }
     UNION
-      { { SELECT  ?rvar16 ?rvar12 ?rvar17 ?rvar15 ?rvar13 ?rvar14
+      { { SELECT  ?rvar40 ?rvar36 ?rvar41 ?rvar39 ?rvar37 ?rvar38
           WHERE
-            { ?rvar14  <http://www.w3.org/ns/prov#atTime>  ?rvar15 ;
-                       <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar13 .
-              ?rvar12  <https://w3id.org/survey-ontology#answeredIn>  ?rvar14 ;
-                       <https://w3id.org/survey-ontology#hasAnswer>  ?rvar17 ;
-                       <https://w3id.org/survey-ontology#completesQuestion>  ?rvar16
-              FILTER ( ?rvar16 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
+            { ?rvar38  <http://www.w3.org/ns/prov#atTime>  ?rvar39 ;
+                       <http://www.w3.org/ns/prov#wasAssociatedWith>  ?rvar37 .
+              ?rvar36  <https://w3id.org/survey-ontology#answeredIn>  ?rvar38 ;
+                       <https://w3id.org/survey-ontology#hasAnswer>  ?rvar41 ;
+                       <https://w3id.org/survey-ontology#completesQuestion>  ?rvar40
+              FILTER ( ?rvar40 IN (<https://vito.be/schema/ggdm#question1>, <https://vito.be/schema/ggdm#question2>, <https://vito.be/schema/ggdm#question3>, <https://vito.be/schema/ggdm#question4>, <https://vito.be/schema/ggdm#question5>, <https://vito.be/schema/ggdm#question6>, <https://vito.be/schema/ggdm#question6-1>, <https://vito.be/schema/ggdm#question6-2>, <https://vito.be/schema/ggdm#question7>, <https://vito.be/schema/ggdm#question7-1>, <https://vito.be/schema/ggdm#question7-2>, <https://vito.be/schema/ggdm#question7-3>, <https://vito.be/schema/ggdm#question7-4>, <https://vito.be/schema/ggdm#question7-5>, <https://vito.be/schema/ggdm#question7-6>, <https://vito.be/schema/ggdm#question7-7>, <https://vito.be/schema/ggdm#question7-8>, <https://vito.be/schema/ggdm#question7-9>, <https://vito.be/schema/ggdm#question7-10>, <https://vito.be/schema/ggdm#question8-1>, <https://vito.be/schema/ggdm#question9-1>, <https://vito.be/schema/ggdm#question10>, <https://vito.be/schema/ggdm#question11>, <https://vito.be/schema/ggdm#question12>, <https://vito.be/schema/ggdm#question13>, <https://vito.be/schema/ggdm#question14>) )
             }
         }
-        BIND(?rvar12 AS ?completedQuestion)
-        BIND(?rvar14 AS ?session)
+        BIND(?rvar38 AS ?session)
+        BIND(?rvar36 AS ?completedQuestion)
       }
   }`;

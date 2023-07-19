@@ -31,7 +31,8 @@ export class HttpServer extends events.EventEmitter {
 
   private requestHandler(req: IncomingMessage, res: ServerResponse) {
     let requestHandlerLogger = new Logger(loggerSettings);
-    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Origin", "https://podquery-demo.vito.be/");
+    //res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
     switch (req.method) {
       case "GET":
         GetHandler.handle(req, res);

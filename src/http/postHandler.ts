@@ -52,6 +52,23 @@ export class PostHandler {
           logger.debug(`Query changed from:\n${body.queryExplanation.queryString}\nto:\n${query}`);
         }
       }
+      else {
+        logger.debug(`Writing 200: Ok`);
+        res.statusCode = 200;
+        res.setHeader("Content-Type", "application/json");
+        res.write(JSON.stringify({bindings: [], query: "SELECT  *\n" +
+            "WHERE\n" +
+            "  { {  }\n" +
+            "    FILTER ( false )\n" +
+            "  }"}));
+        res.end();
+
+        if (fileCreated) {
+          fs.unlinkSync(location);
+        }
+
+        return;
+      }
 
       let queryExplanation = new QueryExplanation(
         query,
@@ -69,8 +86,6 @@ export class PostHandler {
         queryExplanation,
         false
       );
-
-      queryExecutor.delete()
 
       logger.debug(`Writing 200: Ok`);
       res.statusCode = 200;
