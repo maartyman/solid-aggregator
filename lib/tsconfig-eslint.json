@@ -1,0 +1,17 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "incremental": true,
+    "lib": [ "es2021" ],
+    "moduleResolution": "node16",
+    "declaration": true,
+    "inlineSources": true,
+    "newLine": "lf",
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "stripInternal": true
+  },
+  "include": [
+    "."
+  ]
+}
