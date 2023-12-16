@@ -1,0 +1,9 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^5.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/solid-aggregator/^0.0.0/components/context.jsonld"
+  ],
+  "@id": "urn:solid-aggregator:endpoint",
+  "@type": "Endpoint",
+  "test": "test"
+}

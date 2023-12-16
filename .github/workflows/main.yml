@@ -1,0 +1,11 @@
+name: push
+on: [push]
+
+jobs:
+  test:
+    # Run the tests in every case
+    uses: ./.github/workflows/test.yml
+
+  lint:
+    # Run the tests in every case
+    uses: ./.github/workflows/lint.yml
