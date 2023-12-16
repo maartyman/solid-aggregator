@@ -17,8 +17,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-lint-modules-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-lint-modules-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
-        run: yarn install --pure-lockfile
+        run: npm install --pure-lockfile
       - name: Run linter
-        run: yarn run lint
+        run: npm run lint

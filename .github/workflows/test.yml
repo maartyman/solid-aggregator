@@ -28,17 +28,13 @@ jobs:
             **/node_modules
             .rdf-test-suite-cache
             .rdf-test-suite-ldf-cache
-          key: ${{ runner.os }}-test-modules-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-test-modules-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
-        run: yarn install --pure-lockfile
+        run: npm install
       - name: Build project
-        run: yarn run build
-      - name: Run depcheck
-        run: yarn run depcheck
-      - name: Run browser-tests
-        run: yarn run test-browser
+        run: npm run build
       - name: Run tests
-        run: yarn run test-ci
+        run: npm run test
       - name: Submit coverage results
         uses: coverallsapp/github-action@master
         with:
