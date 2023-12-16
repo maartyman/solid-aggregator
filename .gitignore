@@ -1,9 +1,6 @@
 # -- custom: --
-log/
 .idea/
-../solid-agregator-client/client-examples/tests/
-static/
-package-lock.json
+components
 
 # -- predefied: --
 
@@ -134,5 +131,3 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-
-/comunica-feature-reasoning/
