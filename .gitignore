@@ -1,6 +1,7 @@
 # -- custom: --
 .idea/
 components
+componentsjs-error-state.json
 
 lib/**/*.js
 lib/**/*.d.ts
