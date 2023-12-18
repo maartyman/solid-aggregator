@@ -1,10 +1,13 @@
-export * from './endpoint/endpoint';
-
-export * from './aggregator-services/aggregatorService';
-export * from './aggregator-services/aggregatorServiceSparql';
-
 export * from './cost-queue/CostQueue';
 export * from './cost-queue/CostQueueTime';
 
-export * from './operation-registry/aggregatorServiceRegistry';
-export * from './operation-registry/aggregatorServiceRegistryHardcodedTestOnly';
+export * from './endpoint/Endpoint';
+export * from './endpoint/EndpointHandlerServiceDescription';
+
+export * from './init/AppRunner';
+
+export * from './service/Service';
+export * from './service/ServiceSparql';
+
+export * from './service-registry/ServiceRegistry';
+export * from './service-registry/ServiceRegistryHardcodedTestOnly';
