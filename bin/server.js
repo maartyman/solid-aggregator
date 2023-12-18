@@ -8,4 +8,5 @@ process.on('uncaughtExceptionMonitor', (err, origin) => {
   console.error(`Process is halting due to an ${origin} with error ${err.message}`);
 });
 
-AppRunner.cli();
+const appRunner = new AppRunner();
+appRunner.run();
