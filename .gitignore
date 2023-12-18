@@ -2,6 +2,10 @@
 .idea/
 components
 
+lib/**/*.js
+lib/**/*.d.ts
+lib/**/*.js.map
+
 # -- predefied: --
 
 # Logs
