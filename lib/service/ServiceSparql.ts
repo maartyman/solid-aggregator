@@ -1,6 +1,6 @@
-import type { AggregatorService, Operation, OperationResult, OperationTestResult } from './aggregatorService';
+import type { Operation, OperationResult, OperationTestResult, Service } from './Service';
 
-export class AggregatorServiceSPARQL implements AggregatorService {
+export class ServiceSparql implements Service {
   public async initialize(): Promise<void> {
     return undefined;
   }
@@ -9,7 +9,7 @@ export class AggregatorServiceSPARQL implements AggregatorService {
     return {
       aggregatorService: this,
       operation,
-      runnable: false,
+      runnable: true,
     };
   }
 

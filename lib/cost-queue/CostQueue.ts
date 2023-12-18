@@ -1,4 +1,4 @@
-import type { OperationTestResult } from '../aggregator-services/aggregatorService';
+import type { OperationTestResult } from '../service/Service';
 
 export interface CostQueueFactory {
   create: () => CostQueue;

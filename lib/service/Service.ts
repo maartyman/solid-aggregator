@@ -1,6 +1,6 @@
 import type { CostParameters } from '../cost-queue/CostQueue';
 
-export interface AggregatorService {
+export interface Service {
   get description(): string;
   initialize: () => Promise<void>;
   test: (operation: Operation) => Promise<OperationTestResult>;
@@ -8,7 +8,7 @@ export interface AggregatorService {
 }
 
 export interface OperationTestResult {
-  aggregatorService: AggregatorService;
+  aggregatorService: Service;
   operation: Operation;
   runnable: boolean;
   operationResult?: OperationResult;
@@ -16,13 +16,12 @@ export interface OperationTestResult {
 }
 
 export interface OperationResult {
-  aggregatorService: AggregatorService;
+  aggregatorService: Service;
   operation: Operation;
   resultLocation: string;
 }
 
 export interface Operation {
-  id: string;
   operation: string;
   sources: string[];
 }
