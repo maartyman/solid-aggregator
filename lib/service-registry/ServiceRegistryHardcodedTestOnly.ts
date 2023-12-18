@@ -1,19 +1,19 @@
-import type { AggregatorService, Operation, OperationResult } from '../aggregator-services/aggregatorService';
+import type { Operation, OperationResult, Service } from '../service/Service';
 import type { CostQueueFactory } from '../cost-queue/CostQueue';
-import type { AggregatorServiceRegistry } from './aggregatorServiceRegistry';
+import type { ServiceRegistry } from './ServiceRegistry';
 
-export class AggregatorServiceRegistryHardcodedTestOnly implements AggregatorServiceRegistry {
+export class ServiceRegistryHardcodedTestOnly implements ServiceRegistry {
   public readonly costQueueFactory: CostQueueFactory;
-  public readonly aggregatorServices: AggregatorService[];
+  public readonly services: Service[];
 
-  public constructor(aggregatorServices: AggregatorService[], costQueueFactory: CostQueueFactory) {
-    this.aggregatorServices = aggregatorServices;
+  public constructor(aggregatorServices: Service[], costQueueFactory: CostQueueFactory) {
+    this.services = aggregatorServices;
     this.costQueueFactory = costQueueFactory;
   }
 
   public async initializeServices(): Promise<void> {
     await Promise.all(
-      this.aggregatorServices.map(
+      this.services.map(
         async(aggregatorService): Promise<void> => aggregatorService.initialize(),
       ),
     );
@@ -22,7 +22,7 @@ export class AggregatorServiceRegistryHardcodedTestOnly implements AggregatorSer
   public async run(operation: Operation): Promise<OperationResult | undefined> {
     const costQueue = this.costQueueFactory.create();
 
-    await Promise.all(this.aggregatorServices.map(
+    await Promise.all(this.services.map(
       async(aggregatorService): Promise<void> => aggregatorService.test(operation).then(
         (testResult): void => {
           if (testResult.runnable) {
@@ -41,5 +41,13 @@ export class AggregatorServiceRegistryHardcodedTestOnly implements AggregatorSer
     }
 
     return operationResult.operationResult;
+  }
+
+  public get descriptions(): string[] {
+    const result = [];
+    for (const service of this.services) {
+      result.push(service.description);
+    }
+    return result;
   }
 }
