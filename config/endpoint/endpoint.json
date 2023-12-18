@@ -1,0 +1,22 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/componentsjs/^5.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/solid-aggregator/^0.0.0/components/context.jsonld"
+  ],
+  "@graph": [
+    {
+      "@id": "urn:solid-aggregator:endpoint",
+      "@type": "Endpoint",
+      "serviceRegistry": { "@id": "urn:solid-aggregator:service-registry" },
+      "endpointHandlers": [
+        { "@id": "urn:solid-aggregator:endpoint-handler-service-description" }
+      ]
+    },
+    {
+      "@id": "urn:solid-aggregator:endpoint-handler-service-description",
+      "@type": "EndpointHandlerServiceDescription",
+      "serviceRegistry": { "@id": "urn:solid-aggregator:service-registry" },
+      "endpointUrl": "/descriptions"
+    }
+  ]
+}
