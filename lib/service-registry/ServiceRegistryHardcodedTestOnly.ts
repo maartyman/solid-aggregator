@@ -1,12 +1,12 @@
-import type { Operation, OperationResult, Service } from '../service/Service';
-import type { CostQueueFactory } from '../cost-queue/CostQueue';
-import type { ServiceRegistry } from './ServiceRegistry';
+import type { IOperation, IOperationResult, IService } from '../service/IService';
+import type { ICostQueueFactory } from '../cost-queue/ICostQueue';
+import type { IServiceRegistry } from './IServiceRegistry';
 
-export class ServiceRegistryHardcodedTestOnly implements ServiceRegistry {
-  public readonly costQueueFactory: CostQueueFactory;
-  public readonly services: Service[];
+export class ServiceRegistryHardcodedTestOnly implements IServiceRegistry {
+  public readonly costQueueFactory: ICostQueueFactory;
+  public readonly services: IService[];
 
-  public constructor(aggregatorServices: Service[], costQueueFactory: CostQueueFactory) {
+  public constructor(aggregatorServices: IService[], costQueueFactory: ICostQueueFactory) {
     this.services = aggregatorServices;
     this.costQueueFactory = costQueueFactory;
   }
@@ -19,7 +19,7 @@ export class ServiceRegistryHardcodedTestOnly implements ServiceRegistry {
     );
   }
 
-  public async run(operation: Operation): Promise<OperationResult | undefined> {
+  public async run(operation: IOperation): Promise<IOperationResult | undefined> {
     const costQueue = this.costQueueFactory.create();
 
     await Promise.all(this.services.map(
