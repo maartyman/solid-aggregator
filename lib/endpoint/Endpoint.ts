@@ -1,13 +1,13 @@
 import type { IncomingMessage, Server, ServerResponse } from 'node:http';
 import { createServer } from 'node:http';
-import type { ServiceRegistry } from '../service-registry/ServiceRegistry';
+import type { IServiceRegistry } from '../service-registry/IServiceRegistry';
 
 export class Endpoint {
-  public readonly serviceRegistry: ServiceRegistry;
-  public readonly endpointHandlers: EndpointHandler[];
+  public readonly serviceRegistry: IServiceRegistry;
+  public readonly endpointHandlers: IEndpointHandler[];
   private readonly httpServer: Server;
 
-  public constructor(serviceRegistry: ServiceRegistry, endpointHandlers: EndpointHandler[]) {
+  public constructor(serviceRegistry: IServiceRegistry, endpointHandlers: IEndpointHandler[]) {
     this.serviceRegistry = serviceRegistry;
     this.endpointHandlers = endpointHandlers;
     this.httpServer = createServer();
@@ -16,7 +16,7 @@ export class Endpoint {
       this.httpServer.on('request', (request: IncomingMessage, response: ServerResponse): void => {
         Promise.race(
           this.endpointHandlers.map(
-            async(endpointHandler): Promise<EndpointHandler | undefined> =>
+            async(endpointHandler): Promise<IEndpointHandler | undefined> =>
               await endpointHandler.test(request) ? endpointHandler : undefined,
           ),
         )
@@ -46,7 +46,7 @@ export class Endpoint {
   }
 }
 
-export interface EndpointHandler {
+export interface IEndpointHandler {
   test: (request: IncomingMessage) => Promise<boolean>;
   run: (request: IncomingMessage, response: ServerResponse) => Promise<void>;
 }

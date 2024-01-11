@@ -1,11 +1,11 @@
-import type { Operation, OperationResult, OperationTestResult, Service } from './Service';
+import type { IOperation, IOperationResult, IOperationTestResult, IService } from './IService';
 
-export class ServiceSparql implements Service {
+export class ServiceSparql implements IService {
   public async initialize(): Promise<void> {
     return undefined;
   }
 
-  public async test(operation: Operation): Promise<OperationTestResult> {
+  public async test(operation: IOperation): Promise<IOperationTestResult> {
     return {
       aggregatorService: this,
       operation,
@@ -13,7 +13,7 @@ export class ServiceSparql implements Service {
     };
   }
 
-  public async run(operation: Operation): Promise<OperationResult> {
+  public async run(operation: IOperation): Promise<IOperationResult> {
     return {
       aggregatorService: this,
       operation,

@@ -1,15 +1,15 @@
 import TinyQueue from 'tinyqueue';
-import type { OperationTestResult } from '../service/Service';
-import type { CostQueue, CostQueueFactory } from './CostQueue';
+import type { IOperationTestResult } from '../service/IService';
+import type { ICostQueue, ICostQueueFactory } from './ICostQueue';
 
-export class CostQueueTimeFactory implements CostQueueFactory {
-  public create(): CostQueue {
+export class CostQueueTimeFactory implements ICostQueueFactory {
+  public create(): ICostQueue {
     return new CostQueueTime();
   }
 }
 
-class CostQueueTime implements CostQueue {
-  private readonly priorityQueue: TinyQueue<OperationTestResult>;
+class CostQueueTime implements ICostQueue {
+  private readonly priorityQueue: TinyQueue<IOperationTestResult>;
 
   public get length(): number {
     return this.priorityQueue.length;
@@ -19,16 +19,16 @@ class CostQueueTime implements CostQueue {
     this.priorityQueue = new TinyQueue([], compare);
   }
 
-  public push(aggregatorService: OperationTestResult): void {
+  public push(aggregatorService: IOperationTestResult): void {
     this.priorityQueue.push(aggregatorService);
   }
 
-  public pop(): OperationTestResult | undefined {
+  public pop(): IOperationTestResult | undefined {
     return this.priorityQueue.pop();
   }
 }
 
-function compare(a: OperationTestResult, b: OperationTestResult): number {
+function compare(a: IOperationTestResult, b: IOperationTestResult): number {
   if (a.costParameters === undefined) {
     if (b.costParameters === undefined) {
       return 0;
