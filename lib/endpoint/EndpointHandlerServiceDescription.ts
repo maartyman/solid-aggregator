@@ -12,7 +12,7 @@ export class EndpointHandlerServiceDescription implements IEndpointHandler {
   }
 
   public async test(request: IncomingMessage): Promise<boolean> {
-    return request.url === this.endpointUrl;
+    return request.url!.match('^[^?|^#]*')![0] === this.endpointUrl;
   }
 
   public async run(request: IncomingMessage, response: ServerResponse): Promise<void> {

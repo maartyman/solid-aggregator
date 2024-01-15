@@ -11,37 +11,34 @@ export class Endpoint {
     this.serviceRegistry = serviceRegistry;
     this.endpointHandlers = endpointHandlers;
     this.httpServer = createServer();
-    this.serviceRegistry.initializeServices().then((): void => {
-      this.httpServer.listen(8080);
-      this.httpServer.on('request', (request: IncomingMessage, response: ServerResponse): void => {
-        Promise.race(
-          this.endpointHandlers.map(
-            async(endpointHandler): Promise<IEndpointHandler | undefined> =>
-              await endpointHandler.test(request) ? endpointHandler : undefined,
-          ),
-        )
-          .then((endpointHandler): void => {
-            if (endpointHandler === undefined) {
-              response.statusCode = 404;
-              response.end();
-              return;
+  }
+
+  public async start(): Promise<void> {
+    await this.serviceRegistry.initializeServices();
+
+    this.httpServer.listen(1612);
+    this.httpServer.on('request', async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+      let currentEndpointHandler = await Promise.any(
+        this.endpointHandlers.map(
+          async (endpointHandler): Promise<IEndpointHandler> => {
+            if (await endpointHandler.test(request)) {
+              return endpointHandler;
             }
-            endpointHandler.run(request, response)
-              .then((): void => {
-                response.end();
-              })
-              .catch((): void => {
-                response.statusCode = 500;
-                response.end();
-              });
-          })
-          .catch((): void => {
-            response.statusCode = 500;
-            response.end();
-          });
+            throw new Error("Test returned false.");
+          }
+        )
+      ).catch(() => {
+        response.statusCode = 404;
       });
-    }).catch((error: Error): void => {
-      throw error;
+
+      if (currentEndpointHandler) {
+        await currentEndpointHandler.run(request, response)
+          .catch(() => {
+            response.statusCode = 500;
+          });
+      }
+
+      response.end();
     });
   }
 }
