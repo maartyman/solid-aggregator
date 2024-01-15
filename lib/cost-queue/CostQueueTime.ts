@@ -33,10 +33,10 @@ function compare(a: IOperationTestResult, b: IOperationTestResult): number {
     if (b.costParameters === undefined) {
       return 0;
     }
-    return -1;
+    return 1;
   }
   if (b.costParameters === undefined) {
-    return 1;
+    return -1;
   }
   return a.costParameters.timeSeconds - b.costParameters.timeSeconds;
 }
