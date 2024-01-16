@@ -41,13 +41,6 @@ module.exports = {
 
     // Incorrectly detects usage of undefined in "toHaveBeenLastCalledWith" checks
     'unicorn/no-useless-undefined': 'off',
-    'unicorn/filename-case': [ 'error', {
-      cases: {
-        camelCase: true,
-        pascalCase: false,
-        kebabCase: true,
-        snakeCase: false,
-      },
-    }],
+    'unicorn/filename-case': 'off',
   },
 };

@@ -1,182 +1,179 @@
-import {Endpoint, IEndpointHandler} from "../Endpoint";
-import {IServiceRegistry} from "../../service-registry/IServiceRegistry";
-import {IOperation} from "../../service/IService";
+import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { IEndpointHandler } from '../Endpoint';
+import { Endpoint } from '../Endpoint';
+import type { IServiceRegistry } from '../../service-registry/IServiceRegistry';
 
-describe("Endpoint", () => {
+describe('Endpoint', (): void => {
   let serviceRegistry: IServiceRegistry;
   let endpointHandlers: IEndpointHandler[];
   let endpoint: Endpoint;
 
-  afterEach(async () => {
-    await new Promise<void>(resolve => (<any>endpoint).httpServer.close(() => {
+  afterEach(async(): Promise<void> => {
+    await new Promise<void>((resolve): void => (endpoint as any).httpServer.close((): void => {
       resolve();
     }));
   });
 
-  describe('with basic serviceRegistry', () => {
-    beforeEach(() => {
+  describe('with basic serviceRegistry', (): void => {
+    beforeEach((): void => {
       serviceRegistry = {
-        initializeServices: jest.fn().mockReturnValue(Promise.resolve()),
-        descriptions: <any>jest.fn().mockReturnValue([
-          "testDescription"
-        ]),
+        initializeServices: jest.fn().mockResolvedValue(undefined),
+        descriptions: jest.fn().mockReturnValue([
+          'testDescription',
+        ]) as any,
         run: jest.fn(
-          (operation: IOperation) => {
-            return Promise.resolve(undefined)
-          }
-        )
+          async(): Promise<undefined> => undefined,
+        ),
       };
     });
 
-    it('should test multiple endpointHandlers and run the fastest', async () => {
+    it('should test multiple endpointHandlers and run the fastest.', async(): Promise<void> => {
       endpointHandlers = [
         {
-          test: jest.fn().mockReturnValue(new Promise<boolean>(resolve => {
-            setTimeout(() => {
+          test: jest.fn().mockReturnValue(new Promise<boolean>((resolve): void => {
+            setTimeout((): void => {
               resolve(true);
             }, 500);
           })),
-          run: jest.fn().mockReturnValue(Promise.resolve()),
+          run: jest.fn().mockResolvedValue(undefined),
         },
         {
-          test: jest.fn().mockReturnValue(new Promise<boolean>(resolve => {
-            setTimeout(() => {
+          test: jest.fn().mockReturnValue(new Promise<boolean>((resolve): void => {
+            setTimeout((): void => {
               resolve(true);
             }, 100);
           })),
-          run: jest.fn().mockReturnValue(Promise.resolve()),
-        }
+          run: jest.fn().mockResolvedValue(undefined),
+        },
       ];
 
       endpoint = new Endpoint(serviceRegistry, endpointHandlers);
       await endpoint.start();
 
-      expect((await fetch("http://localhost:1612")).ok).toEqual(true);
+      expect((await fetch('http://localhost:1612')).ok).toBe(true);
       expect(endpointHandlers[0].test).toHaveBeenCalledTimes(1);
       expect(endpointHandlers[0].run).toHaveBeenCalledTimes(0);
       expect(endpointHandlers[1].test).toHaveBeenCalledTimes(1);
       expect(endpointHandlers[1].run).toHaveBeenCalledTimes(1);
     });
 
-    it('should test multiple endpointHandlers and not run the undefined', async () => {
+    it('should test multiple endpointHandlers and not run the undefined.', async(): Promise<void> => {
       endpointHandlers = [
         {
-          test: jest.fn().mockReturnValue(new Promise<boolean>(resolve => {
+          test: jest.fn().mockReturnValue(new Promise<boolean>((resolve): void => {
             resolve(false);
           })),
-          run: jest.fn().mockReturnValue(Promise.resolve()),
+          run: jest.fn().mockResolvedValue(undefined),
         },
         {
-          test: jest.fn().mockReturnValue(new Promise<boolean>(resolve => {
-            setTimeout(() => {
+          test: jest.fn().mockReturnValue(new Promise<boolean>((resolve): void => {
+            setTimeout((): void => {
               resolve(true);
             }, 100);
           })),
-          run: jest.fn().mockReturnValue(Promise.resolve()),
-        }
+          run: jest.fn().mockResolvedValue(undefined),
+        },
       ];
 
       endpoint = new Endpoint(serviceRegistry, endpointHandlers);
       await endpoint.start();
 
-      expect((await fetch("http://localhost:1612")).ok).toEqual(true);
+      expect((await fetch('http://localhost:1612')).ok).toBe(true);
       expect(endpointHandlers[0].test).toHaveBeenCalledTimes(1);
       expect(endpointHandlers[0].run).toHaveBeenCalledTimes(0);
       expect(endpointHandlers[1].test).toHaveBeenCalledTimes(1);
       expect(endpointHandlers[1].run).toHaveBeenCalledTimes(1);
     });
 
-    it('should test multiple endpointHandlers and return a 404 if none test', async () => {
+    it('should test multiple endpointHandlers and return a 404 if none test.', async(): Promise<void> => {
       endpointHandlers = [
         {
-          test: jest.fn().mockReturnValue(new Promise<boolean>(resolve => {
-            setTimeout(() => {
+          test: jest.fn().mockReturnValue(new Promise<boolean>((resolve): void => {
+            setTimeout((): void => {
               resolve(false);
             }, 100);
           })),
-          run: jest.fn().mockReturnValue(Promise.resolve()),
+          run: jest.fn().mockResolvedValue(undefined),
         },
         {
-          test: jest.fn().mockReturnValue(new Promise<boolean>(resolve => {
-            setTimeout(() => {
+          test: jest.fn().mockReturnValue(new Promise<boolean>((resolve): void => {
+            setTimeout((): void => {
               resolve(false);
             }, 100);
           })),
-          run: jest.fn().mockReturnValue(Promise.resolve()),
-        }
+          run: jest.fn().mockResolvedValue(undefined),
+        },
       ];
 
       endpoint = new Endpoint(serviceRegistry, endpointHandlers);
       await endpoint.start();
 
-      let response = await fetch("http://localhost:1612");
+      const response = await fetch('http://localhost:1612');
 
-      expect(response.ok).toEqual(false);
-      expect(response.status).toEqual(404);
+      expect(response.ok).toBe(false);
+      expect(response.status).toBe(404);
       expect(endpointHandlers[0].test).toHaveBeenCalledTimes(1);
       expect(endpointHandlers[0].run).toHaveBeenCalledTimes(0);
       expect(endpointHandlers[1].test).toHaveBeenCalledTimes(1);
       expect(endpointHandlers[1].run).toHaveBeenCalledTimes(0);
     });
 
-    it('should return a 500 if the endpointHandler fails', async () => {
+    it('should return a 500 if the endpointHandler fails.', async(): Promise<void> => {
       endpointHandlers = [
         {
-          test: jest.fn().mockReturnValue(Promise.resolve(true)),
-          run: jest.fn().mockImplementation(async() => {
-            throw new Error("Error in run.")
+          test: jest.fn().mockResolvedValue(true),
+          run: jest.fn().mockImplementation(async(): Promise<void> => {
+            throw new Error('Error in run.');
           }),
-        }
+        },
       ];
 
       endpoint = new Endpoint(serviceRegistry, endpointHandlers);
       await endpoint.start();
 
-      let response = await fetch("http://localhost:1612");
+      const response = await fetch('http://localhost:1612');
 
-      expect(response.ok).toEqual(false);
-      expect(response.status).toEqual(500);
+      expect(response.ok).toBe(false);
+      expect(response.status).toBe(500);
       expect(endpointHandlers[0].test).toHaveBeenCalledTimes(1);
       expect(endpointHandlers[0].run).toHaveBeenCalledTimes(1);
     });
 
-    it('should return 404 work with no endpointHandlers', async () => {
-      endpointHandlers = <any> [];
+    it('should return 404 work with no endpointHandlers.', async(): Promise<void> => {
+      endpointHandlers = [] as any;
 
       endpoint = new Endpoint(serviceRegistry, endpointHandlers);
       await endpoint.start();
 
-      let response = await fetch("http://localhost:1612");
+      const response = await fetch('http://localhost:1612');
 
-      expect(response.ok).toEqual(false);
-      expect(response.status).toEqual(404);
+      expect(response.ok).toBe(false);
+      expect(response.status).toBe(404);
     });
   });
 
-  describe('with basic endpointHandlers', () => {
-    beforeEach(() => {
+  describe('with basic endpointHandlers', (): void => {
+    beforeEach((): void => {
       endpointHandlers = [
         {
-          test: jest.fn().mockReturnValue(Promise.resolve(true)),
-          run: jest.fn().mockReturnValue(Promise.resolve()),
-        }
+          test: jest.fn().mockResolvedValue(true),
+          run: jest.fn().mockResolvedValue(undefined),
+        },
       ];
     });
 
-    it('should pass error of service initialization if it fails', async () => {
-      let error = new Error("Error in initialization.");
-      let serviceRegistryThis = {
-        initializeServices: jest.fn().mockImplementation(async() => {
-          throw error
+    it('should pass error of service initialization if it fails.', async(): Promise<void> => {
+      const error = new Error('Error in initialization.');
+      const serviceRegistryThis = {
+        initializeServices: jest.fn().mockImplementation(async(): Promise<void> => {
+          throw error;
         }),
-        descriptions: <any> jest.fn().mockReturnValue([
-          "testDescription"
-        ]),
+        descriptions: jest.fn().mockReturnValue([
+          'testDescription',
+        ]) as any,
         run: jest.fn(
-          (operation: IOperation) => {
-            return Promise.resolve(undefined)
-          }
-        )
+          async(): Promise<undefined> => undefined,
+        ),
       };
 
       endpoint = new Endpoint(serviceRegistryThis, endpointHandlers);
@@ -186,43 +183,53 @@ describe("Endpoint", () => {
     });
   });
 
-  describe("with basic both", () => {
-    beforeEach(async () => {
+  describe('with basic both', (): void => {
+    beforeEach(async(): Promise<void> => {
       serviceRegistry = {
-        initializeServices: jest.fn().mockReturnValue(Promise.resolve()),
-        descriptions: <any>jest.fn().mockReturnValue([
-          "testDescription"
-        ]),
+        initializeServices: jest.fn().mockResolvedValue(undefined),
+        descriptions: jest.fn().mockReturnValue([
+          'testDescription',
+        ]) as any,
         run: jest.fn(
-          (operation: IOperation) => {
-            return Promise.resolve(undefined)
-          }
-        )
+          async(): Promise<undefined> => undefined,
+        ),
       };
 
       endpointHandlers = [
         {
-          test: jest.fn().mockReturnValue(Promise.resolve(true)),
-          run: jest.fn().mockReturnValue(Promise.resolve()),
-        }
-      ]
+          test: jest.fn().mockResolvedValue(true),
+          run: jest.fn().mockResolvedValue(undefined),
+        },
+      ];
 
       endpoint = new Endpoint(serviceRegistry, endpointHandlers);
       await endpoint.start();
     });
 
-    it('should start a server on port 1612', async () => {
-      expect((await fetch("http://localhost:1612")).ok).toEqual(true);
+    it('should start a server on port 1612.', async(): Promise<void> => {
+      expect((await fetch('http://localhost:1612')).ok).toBe(true);
     });
 
-    it('should instantiate the serviceRegistries', () => {
-      expect(serviceRegistry.initializeServices).toHaveBeenCalled();
+    it('should instantiate the serviceRegistries.', (): void => {
+      expect(serviceRegistry.initializeServices).toHaveBeenCalledWith();
     });
 
-    it('should test the endpointHandlers and run them', async () => {
-      expect((await fetch("http://localhost:1612")).ok).toEqual(true);
+    it('should test the endpointHandlers and run them.', async(): Promise<void> => {
+      expect((await fetch('http://localhost:1612')).ok).toBe(true);
       expect(endpointHandlers[0].test).toHaveBeenCalledTimes(1);
       expect(endpointHandlers[0].run).toHaveBeenCalledTimes(1);
+    });
+
+    it('should error if the handle request function throws an error.', async(): Promise<void> => {
+      (endpoint as any).handleRequest = async(request: IncomingMessage, response: ServerResponse): Promise<void> => {
+        response.end();
+        throw new Error('TestError');
+      };
+
+      const spyInstance = jest.spyOn(console, 'error').mockImplementation();
+
+      expect((await fetch('http://localhost:1612')).ok).toBe(true);
+      expect(spyInstance).toHaveBeenCalledWith(new Error('TestError'));
     });
   });
 });

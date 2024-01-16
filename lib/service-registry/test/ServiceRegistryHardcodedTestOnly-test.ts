@@ -1,54 +1,54 @@
-import {ServiceRegistryHardcodedTestOnly} from "../ServiceRegistryHardcodedTestOnly";
-import {IOperation, IOperationResult, IOperationTestResult, IService} from "../../service/IService";
-import {ICostQueueFactory} from "../../cost-queue/ICostQueue";
+import { ServiceRegistryHardcodedTestOnly } from '../ServiceRegistryHardcodedTestOnly';
+import type { IOperation, IOperationTestResult, IService } from '../../service/IService';
+import type { ICostQueueFactory } from '../../cost-queue/ICostQueue';
 
-describe('ServiceRegistryHardcodedTestOnly', () => {
+describe('ServiceRegistryHardcodedTestOnly', (): void => {
   let serviceRegistry: ServiceRegistryHardcodedTestOnly;
   let mockAggregatorServices: IService[];
   let mockCostQueueFactory: ICostQueueFactory;
 
-  beforeEach(() => {
+  beforeEach((): void => {
     mockAggregatorServices = [
-      <any>{ initialize: jest.fn(), test: jest.fn(), description: 'Service1' } as IService,
-      <any>{ initialize: jest.fn(), test: jest.fn(), description: 'Service2' } as IService,
+      ({ initialize: jest.fn(), test: jest.fn(), description: 'Service1' } as any) as IService,
+      ({ initialize: jest.fn(), test: jest.fn(), description: 'Service2' } as any) as IService,
     ];
 
-    mockCostQueueFactory = <any>{
+    mockCostQueueFactory = {
       create: jest.fn(),
-    };
+    } as any;
 
     serviceRegistry = new ServiceRegistryHardcodedTestOnly(mockAggregatorServices, mockCostQueueFactory);
   });
 
-  describe('initializeServices', () => {
-    it('should initialize all services', async () => {
+  describe('initializeServices', (): void => {
+    it('should initialize all services.', async(): Promise<void> => {
       await serviceRegistry.initializeServices();
-      mockAggregatorServices.forEach((service) => {
-        expect(service.initialize).toHaveBeenCalled();
-      });
+      for (const service of mockAggregatorServices) {
+        expect(service.initialize).toHaveBeenCalledWith();
+      }
     });
   });
 
-  describe('run', () => {
-    it('should run operation and return operation result', async () => {
-      const mockOperation: IOperation = <any>{};
-      const mockOperationTestResult: IOperationTestResult = <any>{
-        operationResult: <any>{}
-      };
+  describe('run', (): void => {
+    it('should run operation and return operation result.', async(): Promise<void> => {
+      const mockOperation: IOperation = {} as any;
+      const mockOperationTestResult: IOperationTestResult = {
+        operationResult: {} as any,
+      } as any;
 
       // Mock costQueue methods
       const mockCostQueuePush = jest.fn();
-      const mockCostQueuePop = jest.fn(() => mockOperationTestResult);
-      mockCostQueueFactory.create = jest.fn().mockReturnValue({
+      const mockCostQueuePop = jest.fn((): IOperationTestResult => mockOperationTestResult);
+      jest.spyOn(mockCostQueueFactory, 'create').mockImplementation().mockReturnValue({
         push: mockCostQueuePush,
         pop: mockCostQueuePop,
         length: 1,
       });
 
       // Mock test results
-      mockAggregatorServices.forEach((service) => {
-        service.test = jest.fn().mockResolvedValue({ runnable: true });
-      });
+      for (const service of mockAggregatorServices) {
+        jest.spyOn(service, 'test').mockImplementation().mockResolvedValue({ runnable: true } as any);
+      }
 
       const result = await serviceRegistry.run(mockOperation);
 
@@ -61,26 +61,26 @@ describe('ServiceRegistryHardcodedTestOnly', () => {
       expect(mockCostQueuePop).toHaveBeenCalledTimes(1);
     });
 
-    it('should return undefined if no runnable operation result', async () => {
-      const mockOperation: IOperation = <any>{};
+    it('should return undefined if no runnable operation result.', async(): Promise<void> => {
+      const mockOperation: IOperation = {} as any;
 
       // Mock costQueue methods
       const mockCostQueuePush = jest.fn();
-      const mockCostQueuePop = jest.fn(() => undefined);
-      mockCostQueueFactory.create = jest.fn().mockReturnValue({
+      const mockCostQueuePop = jest.fn((): undefined => undefined);
+      jest.spyOn(mockCostQueueFactory, 'create').mockImplementation().mockReturnValue({
         push: mockCostQueuePush,
         pop: mockCostQueuePop,
         length: 0,
       });
 
       // Mock test results
-      mockAggregatorServices.forEach((service) => {
-        service.test = jest.fn().mockResolvedValue({ runnable: false });
-      });
+      for (const service of mockAggregatorServices) {
+        jest.spyOn(service, 'test').mockImplementation().mockResolvedValue({ runnable: false } as any);
+      }
 
       const result = await serviceRegistry.run(mockOperation);
 
-      expect(result).toBe(undefined);
+      expect(result).toBeUndefined();
       expect(mockCostQueueFactory.create).toHaveBeenCalledTimes(1);
       expect(mockAggregatorServices[0].test).toHaveBeenCalledWith(mockOperation);
       expect(mockAggregatorServices[1].test).toHaveBeenCalledWith(mockOperation);
@@ -88,35 +88,35 @@ describe('ServiceRegistryHardcodedTestOnly', () => {
       expect(mockCostQueuePop).toHaveBeenCalledTimes(1);
     });
 
-    it('should return undefined if one is runnable but has operationResult is undefined', async () => {
-      const mockOperation: IOperation = <any>{};
-      const mockOperationTestResult: IOperationTestResult = <any>{
-        operationResult: undefined
-      };
+    it('should return undefined if one is runnable but has operationResult is undefined.', async(): Promise<void> => {
+      const mockOperation: IOperation = {} as any;
+      const mockOperationTestResult: IOperationTestResult = {
+        operationResult: undefined,
+      } as any;
 
-      let costQueue = {
-        push: <any>{},
-        pop: <any>{},
+      const costQueue = {
+        push: {} as any,
+        pop: {} as any,
         length: 2,
-      }
+      };
       // Mock costQueue methods
       const mockCostQueuePush = jest.fn();
-      const mockCostQueuePop = jest.fn(() => {
-        costQueue.length--;
-        return mockOperationTestResult
+      const mockCostQueuePop = jest.fn((): IOperationTestResult => {
+        costQueue.length -= 1;
+        return mockOperationTestResult;
       });
       costQueue.push = mockCostQueuePush;
       costQueue.pop = mockCostQueuePop;
-      mockCostQueueFactory.create = jest.fn().mockReturnValue(costQueue);
+      jest.spyOn(mockCostQueueFactory, 'create').mockImplementation().mockReturnValue(costQueue);
 
       // Mock test results
-      mockAggregatorServices.forEach((service) => {
-        service.test = jest.fn().mockResolvedValue({ runnable: true });
-      });
+      for (const service of mockAggregatorServices) {
+        jest.spyOn(service, 'test').mockImplementation().mockResolvedValue({ runnable: true } as any);
+      }
 
       const result = await serviceRegistry.run(mockOperation);
 
-      expect(result).toBe(undefined);
+      expect(result).toBeUndefined();
       expect(mockCostQueueFactory.create).toHaveBeenCalledTimes(1);
       expect(mockAggregatorServices[0].test).toHaveBeenCalledWith(mockOperation);
       expect(mockAggregatorServices[1].test).toHaveBeenCalledWith(mockOperation);
@@ -126,10 +126,10 @@ describe('ServiceRegistryHardcodedTestOnly', () => {
     });
   });
 
-  describe('descriptions', () => {
-    it('should return descriptions of all services', () => {
+  describe('descriptions', (): void => {
+    it('should return descriptions of all services.', (): void => {
       const descriptions = serviceRegistry.descriptions;
-      expect(descriptions).toEqual(['Service1', 'Service2']);
+      expect(descriptions).toEqual([ 'Service1', 'Service2' ]);
     });
   });
 });
