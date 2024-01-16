@@ -12,7 +12,10 @@ export class EndpointHandlerServiceDescription implements IEndpointHandler {
   }
 
   public async test(request: IncomingMessage): Promise<boolean> {
-    return request.url === this.endpointUrl;
+    if (request.url === undefined) {
+      throw new Error('Test failed because the url is undefined!');
+    }
+    return /^[^#?^|]*/u.exec(request.url)![0] === this.endpointUrl;
   }
 
   public async run(request: IncomingMessage, response: ServerResponse): Promise<void> {

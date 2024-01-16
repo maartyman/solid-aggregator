@@ -34,11 +34,13 @@
     "build:ts": "tsc",
     "build:components": "componentsjs-generator -i .componentsignore",
     "prepare": "npm run build",
-    "jest": "jest --coverageReporters text-summary --",
+    "jest": "jest",
+    "jest:simple": "jest --coverageReporters text-summary --",
     "lint": "eslint . --cache --max-warnings 0",
     "lint:fix": "eslint . --max-warnings 0 --fix",
     "start": "node ./bin/server.js",
     "test": "npm run jest",
+    "test:simple": "npm run jest:simple",
     "pre-commit": "npm run build && npm run lint && npm run test"
   },
   "dependencies": {

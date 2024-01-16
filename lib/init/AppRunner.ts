@@ -8,7 +8,8 @@ export class AppRunner {
       mainModulePath: path.join(__dirname, '../..'),
     });
     await manager.configRegistry.register('../../config/default.json');
-    // eslint-disable-next-line unused-imports/no-unused-vars
-    const myInstance: Endpoint = await manager.instantiate('urn:solid-aggregator:endpoint');
+
+    const endpoint: Endpoint = await manager.instantiate('urn:solid-aggregator:endpoint');
+    await endpoint.start();
   }
 }
