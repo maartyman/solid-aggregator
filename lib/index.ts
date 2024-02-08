@@ -6,8 +6,8 @@ export * from './endpoint/EndpointHandlerServiceDescription';
 
 export * from './init/AppRunner';
 
-export * from './service/Service';
 export * from './service/ServiceSparql';
+export * from './service/IService';
 
 export * from './service-registry/ServiceRegistry';
 export * from './service-registry/ServiceRegistryHardcodedTestOnly';

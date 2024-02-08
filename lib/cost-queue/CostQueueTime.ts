@@ -1,5 +1,5 @@
 import TinyQueue from 'tinyqueue';
-import type { OperationTestResult } from '../service/Service';
+import type { OperationTestResult } from '../service/IService';
 import type { CostQueue, CostQueueFactory } from './CostQueue';
 
 export class CostQueueTimeFactory implements CostQueueFactory {

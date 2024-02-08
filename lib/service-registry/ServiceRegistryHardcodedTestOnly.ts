@@ -1,12 +1,12 @@
-import type { Operation, OperationResult, Service } from '../service/Service';
+import type { IService, Operation, OperationResult } from '../service/IService';
 import type { CostQueueFactory } from '../cost-queue/CostQueue';
 import type { ServiceRegistry } from './ServiceRegistry';
 
 export class ServiceRegistryHardcodedTestOnly implements ServiceRegistry {
   public readonly costQueueFactory: CostQueueFactory;
-  public readonly services: Service[];
+  public readonly services: IService[];
 
-  public constructor(aggregatorServices: Service[], costQueueFactory: CostQueueFactory) {
+  public constructor(aggregatorServices: IService[], costQueueFactory: CostQueueFactory) {
     this.services = aggregatorServices;
     this.costQueueFactory = costQueueFactory;
   }

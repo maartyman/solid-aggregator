@@ -1,4 +1,4 @@
-import type { Operation, OperationResult } from '../service/Service';
+import type { Operation, OperationResult } from '../service/IService';
 
 export interface ServiceRegistry {
   get descriptions(): string[];

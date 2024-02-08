@@ -1,4 +1,4 @@
-import type { OperationTestResult } from '../service/Service';
+import type { OperationTestResult } from '../service/IService';
 
 export interface CostQueueFactory {
   create: () => CostQueue;
