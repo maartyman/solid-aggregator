@@ -8,20 +8,30 @@
   ],
   "@graph": [
     {
+      "@id": "urn:solid-aggregator:cost-queue-factory",
+      "@type": "CostQueueTimeFactory"
+    },
+    {
+      "@id": "urn:solid-aggregator:fetch",
+      "@type": "NativeFetch"
+    },
+    {
+      "@id": "urn:solid-aggregator:pod",
+      "@type": "PodCss"
+    },
+    {
+      "@id": "urn:solid-aggregator:aggregator-service-aggregation",
+      "@type": "ServiceAggregation",
+      "fetch": { "@id": "urn:solid-aggregator:fetch" },
+      "pod": { "@id": "urn:solid-aggregator:pod" }
+    },
+    {
       "@id": "urn:solid-aggregator:service-registry",
       "@type": "ServiceRegistryHardcodedTestOnly",
       "costQueueFactory": { "@id": "urn:solid-aggregator:cost-queue-factory" },
       "aggregatorServices": [
-        { "@id": "urn:solid-aggregator:aggregator-service-SPARQL" }
+        { "@id": "urn:solid-aggregator:aggregator-service-aggregation" }
       ]
-    },
-    {
-      "@id": "urn:solid-aggregator:aggregator-service-SPARQL",
-      "@type": "ServiceSparql"
-    },
-    {
-      "@id": "urn:solid-aggregator:cost-queue-factory",
-      "@type": "CostQueueTimeFactory"
     }
   ]
 }
