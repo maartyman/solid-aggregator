@@ -41,7 +41,7 @@
     "lint:fix": "eslint . --max-warnings 0 --fix",
     "start": "node ./bin/server.js",
     "test": "npm run jest",
-    "test:simple": "npm run jest:simple",
+    "test:simple": "npm run jest:simple"
   },
   "dependencies": {
     "@solid/community-server": "^7.0.3",
