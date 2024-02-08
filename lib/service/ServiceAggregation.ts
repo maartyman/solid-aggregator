@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import type { IFetch } from '../fetch/IFetch';
 import type { IPod } from '../pod/IPod';
 import { AsyncConstructor } from '../core/AsyncConstructor';
-import type { IService, Operation, OperationResult, OperationTestResult, ServiceDescription } from './IService';
+import type { IOperation, IOperationResult, IOperationTestResult, IService, IServiceDescription } from './IService';
 
 export class ServiceAggregation extends AsyncConstructor implements IService {
   public fetch: IFetch;
@@ -20,7 +20,7 @@ export class ServiceAggregation extends AsyncConstructor implements IService {
     this.podLocation = await args.pod.newServiceLocation(this.description);
   }
 
-  public async test(operation: Operation): Promise<OperationTestResult> {
+  public async test(operation: IOperation): Promise<IOperationTestResult> {
     if (operation.operation !== 'Aggregation') {
       throw new Error('Not an aggregation operation');
     }
@@ -31,7 +31,7 @@ export class ServiceAggregation extends AsyncConstructor implements IService {
     };
   }
 
-  public async run(operation: Operation): Promise<OperationResult> {
+  public async run(operation: IOperation): Promise<IOperationResult> {
     const resultLocation = `${this.podLocation}/${v4()}.ttl`;
 
     const streamWriter = new StreamWriter();
@@ -57,7 +57,7 @@ export class ServiceAggregation extends AsyncConstructor implements IService {
     };
   }
 
-  public get description(): ServiceDescription {
+  public get description(): IServiceDescription {
     return {
       toString: (): string => 'Aggregation',
     };

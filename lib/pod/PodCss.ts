@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 import { AppRunner } from '@solid/community-server';
 import { v4 } from 'uuid';
 import { AsyncConstructor } from '../core/AsyncConstructor';
-import type { ServiceDescription } from '../service/IService';
+import type { IServiceDescription } from '../service/IService';
 import type { IPod, PodServiceLocation } from './IPod';
 
 export class PodCss extends AsyncConstructor implements IPod {
@@ -39,7 +39,7 @@ export class PodCss extends AsyncConstructor implements IPod {
     // TODO [2024-03-01]: Edit profile card
   }
 
-  public async newServiceLocation(description: ServiceDescription): Promise<PodServiceLocation> {
+  public async newServiceLocation(description: IServiceDescription): Promise<PodServiceLocation> {
     if (!this.initialized) {
       await new Promise<void>((resolve): void => {
         this.subscribeInitialized((): void => {

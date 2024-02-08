@@ -9,8 +9,28 @@ describe('ServiceRegistryHardcodedTestOnly', (): void => {
 
   beforeEach((): void => {
     mockAggregatorServices = [
-      ({ initialize: jest.fn(), test: jest.fn(), description: 'Service1' } as any) as IService,
-      ({ initialize: jest.fn(), test: jest.fn(), description: 'Service2' } as any) as IService,
+      ({
+        subscribeInitialized: jest.fn(
+          (resolve): void => {
+            resolve();
+          },
+        ),
+        test: jest.fn(),
+        description: {
+          toString: (): string => 'Service1',
+        },
+      } as any) as IService,
+      ({
+        subscribeInitialized: jest.fn(
+          (resolve): void => {
+            resolve();
+          },
+        ),
+        test: jest.fn(),
+        description: {
+          toString: (): string => 'Service2',
+        },
+      } as any) as IService,
     ];
 
     mockCostQueueFactory = {
@@ -24,7 +44,7 @@ describe('ServiceRegistryHardcodedTestOnly', (): void => {
     it('should initialize all services.', async(): Promise<void> => {
       await serviceRegistry.initializeServices();
       for (const service of mockAggregatorServices) {
-        expect(service.initialize).toHaveBeenCalledWith();
+        expect(service.subscribeInitialized).toHaveBeenCalledWith(expect.any(Function));
       }
     });
   });

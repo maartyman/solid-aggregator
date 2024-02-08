@@ -1,25 +1,24 @@
 import { AsyncConstructor } from '../core/AsyncConstructor';
 import type { IPod } from '../pod/IPod';
 import type { IFetch } from '../fetch/IFetch';
-import type { IService, Operation, OperationResult, OperationTestResult, ServiceDescription } from './IService';
-import type { ServiceAggregationArgs } from './ServiceAggregation';
+import type { IOperation, IOperationResult, IOperationTestResult, IService, IServiceDescription } from './IService';
 
 export class ServiceEmpty extends AsyncConstructor implements IService {
   private podLocation: string | undefined;
   public fetch: IFetch;
   public pod: IPod;
 
-  public constructor(args: ServiceAggregationArgs) {
+  public constructor(args: ServiceEmptyArgs) {
     super(args);
     this.fetch = args.fetch;
     this.pod = args.pod;
   }
 
-  protected async initialize(args: ServiceAggregationArgs): Promise<void> {
+  protected async initialize(args: ServiceEmptyArgs): Promise<void> {
     this.podLocation = await args.pod.newServiceLocation(this.description);
   }
 
-  public async test(operation: Operation): Promise<OperationTestResult> {
+  public async test(operation: IOperation): Promise<IOperationTestResult> {
     if (operation.operation !== 'Empty') {
       throw new Error('Not a Empty operation');
     }
@@ -30,7 +29,7 @@ export class ServiceEmpty extends AsyncConstructor implements IService {
     };
   }
 
-  public async run(operation: Operation): Promise<OperationResult> {
+  public async run(operation: IOperation): Promise<IOperationResult> {
     return {
       aggregatorService: this,
       operation,
@@ -38,7 +37,7 @@ export class ServiceEmpty extends AsyncConstructor implements IService {
     };
   }
 
-  public get description(): ServiceDescription {
+  public get description(): IServiceDescription {
     return {
       toString: (): string => 'Empty',
     };
