@@ -14,7 +14,8 @@ export class ServiceRegistryHardcodedTestOnly implements IServiceRegistry {
   public async initializeServices(): Promise<void> {
     await Promise.all(
       this.services.map(
-        async(aggregatorService): Promise<void> => aggregatorService.initialize(),
+        async(aggregatorService): Promise<void> => new Promise<void>((resolve): void =>
+          aggregatorService.subscribeInitialized(resolve)),
       ),
     );
   }
@@ -46,7 +47,7 @@ export class ServiceRegistryHardcodedTestOnly implements IServiceRegistry {
   public get descriptions(): string[] {
     const result = [];
     for (const service of this.services) {
-      result.push(service.description);
+      result.push(service.description.toString());
     }
     return result;
   }

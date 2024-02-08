@@ -1,10 +1,14 @@
 import type { CostParameters } from '../cost-queue/ICostQueue';
+import type { IAsyncConstructor } from '../core/AsyncConstructor';
 
-export interface IService {
-  get description(): string;
-  initialize: () => Promise<void>;
+export interface IService extends IAsyncConstructor {
+  get description(): IServiceDescription;
   test: (operation: IOperation) => Promise<IOperationTestResult>;
   run: (operation: IOperation) => Promise<IOperationResult | undefined>;
+}
+
+export interface IServiceDescription {
+  toString: () => string;
 }
 
 export interface IOperationTestResult {
