@@ -1,6 +1,13 @@
+const typescript = require('eslint-plugin-typescript');
+
 module.exports = {
+  plugins: {
+    typescript,
+  },
   rules: {
     'antfu/consistent-list-newline': 'error',
+
+    'typescript/interface-name-prefix': [ 'error', 'always' ],
 
     'arrow-body-style': [ 'error', 'as-needed', { requireReturnForObjectLiteral: false }],
     'capitalized-comments': [ 'error', 'always', { ignoreConsecutiveComments: true }],
