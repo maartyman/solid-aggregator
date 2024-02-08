@@ -12,6 +12,8 @@ export * from './fetch/NativeFetch';
 export * from './init/AppRunner';
 
 export * from './service/IService';
+export * from './service/ServiceEmpty';
+export * from './service/ServiceAggregation';
 
 export * from './service-registry/ServiceRegistry';
 export * from './service-registry/ServiceRegistryHardcodedTestOnly';
