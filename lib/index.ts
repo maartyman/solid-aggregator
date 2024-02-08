@@ -1,3 +1,5 @@
+export * from './core/AsyncConstructor';
+
 export * from './cost-queue/CostQueue';
 export * from './cost-queue/CostQueueTime';
 
